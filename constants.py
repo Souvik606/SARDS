@@ -17,3 +17,4 @@ T_MUL = 'MUL'        # Multiplication operator (*)
 T_DIVIDE = 'DIV'     # Division operator (/)
 T_LPAREN = 'LPAREN'  # Left parenthesis (
 T_RPAREN = 'RPAREN'  # Right parenthesis )
+T_EOF='EOF'          # End of File

@@ -24,7 +24,8 @@ as an Abstract Syntax Tree (AST).
 """
 
 from Lexer import *  # Importing the lexer module for tokenization
-from Parser import *  # Importing the parser module for syntax analysis
+from Parser import * # Importing the parser module for syntax analysis
+from Interpreter import *
 
 
 def run(filename, text):
@@ -55,9 +56,6 @@ def run(filename, text):
     lexer = Lexer(filename, text)  # Initialize the Lexer with the input text
     tokens, error = lexer.enumerate_tokens()  # Generate tokens
 
-    # Debugging: Print tokens for reference
-    print(tokens)
-
     # If lexical analysis encounters an error, return it
     if error:
         return None, error
@@ -67,16 +65,23 @@ def run(filename, text):
     syntax_tree = parser.parse()  # Generate AST
 
     # Return the parsed AST and any errors encountered
-    return syntax_tree.node, syntax_tree.error
+    if syntax_tree.error:
+        return None,syntax_tree.error
+
+    interpreter=Interpreter()
+    context=Context('<program>')
+    result=interpreter.visit(syntax_tree.node,context)
+
+    return result.value, result.error
 
 
 # REPL (Read-Eval-Print Loop) for continuous user interaction
 while True:
     text = input('code > ')  # Prompt user for an expression
-    ast, errors = run('<stdin>', text)  # Process input
+    result, errors = run('<stdin>', text)  # Process input
 
     # Print errors if encountered, otherwise display the AST
     if errors:
         print(errors.to_string())
     else:
-        print(ast)
+        print(result)

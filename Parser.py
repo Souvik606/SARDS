@@ -57,6 +57,8 @@ class NumberNode:
     """Represents a numeric literal in the Abstract Syntax Tree (AST)."""
     def __init__(self, token):
         self.token = token
+        self.pos_start=self.token.pos_start
+        self.pos_end=self.token.pos_end
 
     def __repr__(self):
         return f'{self.token}'
@@ -66,6 +68,8 @@ class UnaryOperationNode:
     def __init__(self, operator, node):
         self.operator = operator
         self.node = node
+        self.pos_start=self.operator.pos_start
+        self.pos_end=self.node.pos_end
 
     def __repr__(self):
         return f'({self.operator}, {self.node})'
@@ -76,6 +80,8 @@ class BinaryOperationNode:
         self.left_node = left_node
         self.operator = operator
         self.right_node = right_node
+        self.pos_start=self.left_node.pos_start
+        self.pos_end=self.right_node.pos_end
 
     def __repr__(self):
         return f'({self.left_node}, {self.operator}, {self.right_node})'

@@ -1,5 +1,5 @@
 """
-Module: Position and Error_tracking
+Module: Position and Error Tracking
 
 This module provides utility classes for tracking the position of characters in an input text
 and handling errors encountered during tokenization or parsing.
@@ -8,19 +8,29 @@ Classes:
 - Position: Maintains the current position in the input text, including index, line, and column.
 - Error: Serves as a base class for error handling, storing details about errors that occur.
 - IllegalCharError: A specific error subclass for handling illegal character occurrences.
+- InvalidSyntaxError: A specific error subclass for handling invalid syntax occurrences.
 """
 
 class Position:
-    """Tracks the current position in the input text, including index, line, and column."""
+    """
+    Tracks the current position in the input text, including index, line, and column.
+
+    Attributes:
+    - index (int): The current character index in the input text.
+    - line (int): The current line number in the input text.
+    - col (int): The current column number in the input text.
+    - file_name (str): The name of the file being processed.
+    - file_text (str): The full content of the file being processed.
+    """
 
     def __init__(self, index, line, col, file_name, file_text):
-        self.index = index  # The current character index in the input text.
-        self.line = line  # The current line number in the input text.
-        self.col = col  # The current column number in the input text.
-        self.file_name = file_name  # The name of the file being processed.
-        self.file_text = file_text  # The full content of the file being processed.
+        self.index = index
+        self.line = line
+        self.col = col
+        self.file_name = file_name
+        self.file_text = file_text
 
-    def advance(self, current_char):
+    def advance(self, current_char=None):
         """
         Moves the position forward by one character.
 
@@ -28,7 +38,7 @@ class Position:
         and resets the column number. Otherwise, it simply increments the column number.
 
         Parameters:
-        - current_char (str): The character currently being processed.
+        - current_char (str, optional): The character currently being processed.
 
         Returns:
         - Position: The updated position object.
@@ -50,13 +60,21 @@ class Position:
         return Position(self.index, self.line, self.col, self.file_name, self.file_text)
 
 class Error:
-    """Represents a general error encountered during tokenization or parsing."""
+    """
+    Represents a general error encountered during tokenization or parsing.
+
+    Attributes:
+    - pos_start (Position): The starting position of the error.
+    - pos_end (Position): The ending position of the error.
+    - error_name (str): The name/type of the error.
+    - details (str): Additional details about the error.
+    """
 
     def __init__(self, pos_start, pos_end, error_name, details):
-        self.pos_start = pos_start  # The starting position of the error.
-        self.pos_end = pos_end  # The ending position of the error.
-        self.error_name = error_name  # The name/type of the error.
-        self.details = details  # Additional details about the error.
+        self.pos_start = pos_start
+        self.pos_end = pos_end
+        self.error_name = error_name
+        self.details = details
 
     def to_string(self):
         """
@@ -69,15 +87,39 @@ class Error:
         return f'{self.error_name}: {self.details}\nFile {self.pos_start.file_name}, line {self.pos_start.line + 1}'
 
 class IllegalCharError(Error):
-    """Handles errors caused by illegal characters in the input text."""
+    """
+    Handles errors caused by illegal characters in the input text.
 
-    def __init__(self, pos_start, pos_end, details):
+    Inherits from:
+    - Error
+    """
+
+    def __init__(self, pos_start, pos_end, details=''):
         """
         Initializes an IllegalCharError instance.
 
         Parameters:
         - pos_start (Position): The starting position of the illegal character.
         - pos_end (Position): The ending position of the illegal character.
-        - details (str): Additional information about the error.
+        - details (str, optional): Additional information about the error. Defaults to an empty string.
         """
         super().__init__(pos_start, pos_end, 'Illegal Character', details)
+
+class InvalidSyntaxError(Error):
+    """
+    Handles errors caused by invalid syntax in the input text.
+
+    Inherits from:
+    - Error
+    """
+
+    def __init__(self, pos_start, pos_end, details=''):
+        """
+        Initializes an InvalidSyntaxError instance.
+
+        Parameters:
+        - pos_start (Position): The starting position of the syntax error.
+        - pos_end (Position): The ending position of the syntax error.
+        - details (str, optional): Additional information about the error. Defaults to an empty string.
+        """
+        super().__init__(pos_start, pos_end, 'Invalid Syntax', details)

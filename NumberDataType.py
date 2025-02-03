@@ -158,6 +158,7 @@ class Number:
     def not_by(self):
         return Number(int(not self.value)).set_context(self.context),None
 
+
     def __repr__(self):
         """
         Returns a string representation of the Number instance.

@@ -29,20 +29,23 @@ Methods:
 from Error_Class import *
 from constants import *
 from variablesNode import *
+from if_else_elif_statements import *
+
 
 class ParseResult:
     """Stores the result of a parsing operation, including errors and the parsed node."""
+
     def __init__(self):
         self.error = None
         self.node = None
-        self.advance_count=0
-        
+        self.advance_count = 0
+
     def register_advancement(self):
-        self.advance_count+=1
-            
+        self.advance_count += 1
+
     def register(self, res):
         """Registers the result of a parsing operation, propagating errors and nodes."""
-        self.advance_count+=res.advance_count
+        self.advance_count += res.advance_count
         if res.error: self.error = res.error
         return res.node
 
@@ -53,45 +56,53 @@ class ParseResult:
 
     def failure(self, error):
         """Marks the parsing as failed and stores the associated error."""
-        if not self.error or self.advance_count==0:
+        if not self.error or self.advance_count == 0:
             self.error = error
         return self
 
+
 class NumberNode:
     """Represents a numeric literal in the Abstract Syntax Tree (AST)."""
+
     def __init__(self, token):
         self.token = token
-        self.pos_start=self.token.pos_start
-        self.pos_end=self.token.pos_end
+        self.pos_start = self.token.pos_start
+        self.pos_end = self.token.pos_end
 
     def __repr__(self):
         return f'{self.token}'
 
+
 class UnaryOperationNode:
     """Represents a unary operation (e.g., negation) in the AST."""
+
     def __init__(self, operator, node):
         self.operator = operator
         self.node = node
-        self.pos_start=self.operator.pos_start
-        self.pos_end=self.node.pos_end
+        self.pos_start = self.operator.pos_start
+        self.pos_end = self.node.pos_end
 
     def __repr__(self):
         return f'({self.operator}, {self.node})'
 
+
 class BinaryOperationNode:
     """Represents a binary operation (e.g., addition, multiplication) in the AST."""
+
     def __init__(self, left_node, operator, right_node):
         self.left_node = left_node
         self.operator = operator
         self.right_node = right_node
-        self.pos_start=self.left_node.pos_start
-        self.pos_end=self.right_node.pos_end
+        self.pos_start = self.left_node.pos_start
+        self.pos_end = self.right_node.pos_end
 
     def __repr__(self):
         return f'({self.left_node}, {self.operator}, {self.right_node})'
 
+
 class Parser:
     """Performs recursive descent parsing of tokenized mathematical expressions."""
+
     def __init__(self, tokens):
         self.tokens = tokens
         self.current_tok = None
@@ -114,19 +125,111 @@ class Parser:
 
     def parse(self):
         """Initiates parsing and returns the final AST or an error if parsing fails."""
-        if self.current_tok.type==T_KEYWORD and self.current_tok.value=='define':
+        if self.current_tok.type == T_KEYWORD and self.current_tok.value == 'define':
             result = self.statements()
-        elif self.current_tok.type==T_IDENTIFIER:
-            if self.peek() and self.peek().type==T_EQ:
-                result=self.statements()
+        elif self.current_tok.type == T_IDENTIFIER:
+            if self.peek() and self.peek().type == T_EQ:
+                result = self.statements()
             else:
-                result=self.expression()
+                result = self.expression()
         else:
-            result=self.expression()
+            result = self.expression()
 
         if not result.error and self.current_tok.type != T_EOF:
-            return result.failure(InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '+', '-', '*', '/'"))
+            return result.failure(
+                InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '+', '-', '*', '/'"))
         return result
+
+    def if_expression(self):
+        res = ParseResult()
+        cases = []
+        else_case = None
+
+        if not (self.current_tok.type == T_KEYWORD and self.current_tok.value == 'when'):
+            return res.failure(
+                InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, f"Expected 'when'"))
+
+        res.register_advancement()
+        self.advance()
+
+        condition = res.register(self.expression())
+        if res.error: return res
+
+        if not self.current_tok.type == T_LPAREN2:
+            return res.failure(InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '{'"))
+
+        res.register_advancement()
+        self.advance()
+
+        if self.current_tok.type == T_IDENTIFIER and self.peek() and self.peek().type == T_EQ:
+            expression = res.register(self.statements())
+        else:
+            expression = res.register(self.expression())
+
+        if res.error: return res
+        cases.append((condition, expression))
+
+        if not self.current_tok.type == T_RPAREN2:
+            return res.failure(InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '}'"))
+
+        res.register_advancement()
+        self.advance()
+
+        while self.current_tok and self.current_tok.type == T_KEYWORD and self.current_tok.value == 'orwhen':
+            res.register_advancement()
+            self.advance()
+
+            condition = res.register(self.expression())
+            if res.error: return res
+
+            if not self.current_tok.type == T_LPAREN2:
+                return res.failure(
+                    InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '{'"))
+
+            res.register_advancement()
+            self.advance()
+
+            if self.current_tok.type == T_IDENTIFIER and self.peek() and self.peek().type == T_EQ:
+                expression = res.register(self.statements())
+            else:
+                expression = res.register(self.expression())
+
+            if res.error: return res
+            cases.append((condition, expression))
+
+            if not self.current_tok.type == T_RPAREN2:
+                return res.failure(
+                    InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '}'"))
+
+            res.register_advancement()
+            self.advance()
+
+        if self.current_tok and self.current_tok.type == T_KEYWORD and self.current_tok.value == 'otherwise':
+            res.register_advancement()
+            self.advance()
+
+            if not self.current_tok.type == T_LPAREN2:
+                return res.failure(
+                    InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '{'"))
+
+            res.register_advancement()
+            self.advance()
+
+            if self.current_tok.type == T_IDENTIFIER and self.peek() and self.peek().type == T_EQ:
+                expression = res.register(self.statements())
+            else:
+                expression = res.register(self.expression())
+            if res.error: return res
+            else_case = expression
+
+            if not self.current_tok.type == T_RPAREN2:
+                return res.failure(
+                    InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '}'"))
+
+            res.register_advancement()
+            self.advance()
+
+        return res.success(IfNode(cases, else_case))
 
     def factor(self):
         """Parses factors (numbers, parentheses, and unary operations)."""
@@ -146,7 +249,7 @@ class Parser:
             self.advance()
             return res.success(NumberNode(token))
 
-        elif token.type==T_IDENTIFIER:
+        elif token.type == T_IDENTIFIER:
             res.register_advancement()
             self.advance()
             return res.success(VariableUseNode(token))
@@ -162,9 +265,16 @@ class Parser:
                 self.advance()
                 return res.success(expression)
             else:
-                return res.failure(InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected ')'"))
+                return res.failure(
+                    InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected ')'"))
 
-        return res.failure(InvalidSyntaxError(token.pos_start, token.pos_end, "Expected int, float,identifier,'+','-'or '('"))
+        elif token.type == T_KEYWORD and token.value == 'when':
+            if_expr = res.register(self.if_expression())
+            if res.error: return res
+            return res.success(if_expr)
+
+        return res.failure(
+            InvalidSyntaxError(token.pos_start, token.pos_end, "Expected int, float,identifier,'+','-'or '('"))
 
     def term(self):
         """Parses terms, handling multiplication and division operations."""
@@ -210,76 +320,80 @@ class Parser:
             if res.error: return res
             return res.success(VariableAssignNode(var_name, expression))
 
-        elif self.current_tok.type==T_IDENTIFIER:
-            var_name=self.current_tok
+        elif self.current_tok.type == T_IDENTIFIER:
+            var_name = self.current_tok
             res.register_advancement()
             self.advance()
 
-            if self.current_tok.type!=T_EQ:
-                return res.failure(InvalidSyntaxError(self.current_tok.pos_start,self.current_tok.pos_end, "Expected ="))
+            if self.current_tok.type != T_EQ:
+                return res.failure(
+                    InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected ="))
 
             res.register_advancement()
             self.advance()
 
-            expression=res.register(self.expression())
+            expression = res.register(self.expression())
             if res.error: return res
 
-            return res.success(VariableAssignNode(var_name,expression))
+            return res.success(VariableAssignNode(var_name, expression))
 
-        return res.failure(InvalidSyntaxError(self.current_tok.pos_start,self.current_tok.pos_end,"Expected 'define' or identifier"))
+        return res.failure(
+            InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected 'define' or identifier"))
 
     def expression(self):
-        res=ParseResult()
+        res = ParseResult()
 
-        left_node=res.register(self.comp_expression())
-        if res.error:return res
+        left_node = res.register(self.comp_expression())
+        if res.error: return res
 
-        while self.current_tok and self.current_tok.type==T_KEYWORD and self.current_tok.value in ('and','or'):
-            operator=self.current_tok
+        while self.current_tok and self.current_tok.type == T_KEYWORD and self.current_tok.value in ('and', 'or'):
+            operator = self.current_tok
             res.register_advancement()
             self.advance()
 
-            right_node=res.register(self.comp_expression())
-            if res.error:return res
+            right_node = res.register(self.comp_expression())
+            if res.error: return res
 
-            left_node=BinaryOperationNode(left_node,operator,right_node)
+            left_node = BinaryOperationNode(left_node, operator, right_node)
 
-        node=res.register(res.success(left_node))
+        node = res.register(res.success(left_node))
         if res.error:
-            return res.failure(InvalidSyntaxError(self.current_tok.pos_start,self.current_tok.pos_end,"Expected int,float,identifier"))
+            return res.failure(InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end,
+                                                  "Expected int,float,identifier"))
         return res.success(node)
 
     def comp_expression(self):
-        res=ParseResult()
+        res = ParseResult()
 
-        if self.current_tok.type==T_KEYWORD and self.current_tok.value=='not':
-            operator_token=self.current_tok
+        if self.current_tok.type == T_KEYWORD and self.current_tok.value == 'not':
+            operator_token = self.current_tok
             res.register_advancement()
             self.advance()
 
-            node=res.register(self.comp_expression())
+            node = res.register(self.comp_expression())
             if res.error: return res
-            return res.success(UnaryOperationNode(operator_token,node))
+            return res.success(UnaryOperationNode(operator_token, node))
 
-        left_node=res.register(self.arith_expression())
-        if res.error:return res
+        left_node = res.register(self.arith_expression())
+        if res.error: return res
 
-        while self.current_tok and self.current_tok.type in (T_EE,T_LT,T_GT,T_GTE,T_LTE):
-            operator=self.current_tok
+        while self.current_tok and self.current_tok.type in (T_EE, T_LT, T_GT, T_GTE, T_LTE):
+            operator = self.current_tok
             res.register_advancement()
             self.advance()
-            right_node=res.register(self.arith_expression())
+            right_node = res.register(self.arith_expression())
             if res.error: return res
-            left_node=BinaryOperationNode(left_node,operator,right_node)
+            left_node = BinaryOperationNode(left_node, operator, right_node)
 
-        node=res.register(res.success(left_node))
+        node = res.register(res.success(left_node))
         if res.error:
-            return res.failure(InvalidSyntaxError(self.current_tok.pos_start,self.current_tok.pos_end,"Expected int,float,identifier,'+','-','not' or '('"))
+            return res.failure(InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end,
+                                                  "Expected int,float,identifier,'+','-','not' or '('"))
         return res.success(node)
 
     def arith_expression(self):
         """Parses full expressions, handling addition and subtraction operations."""
-        res=ParseResult()
+        res = ParseResult()
         left_node = res.register(self.term())
         if res.error:
             return res
@@ -293,7 +407,8 @@ class Parser:
                 return res
             left_node = BinaryOperationNode(left_node, operator, right_node)
 
-        node=res.register(res.success(left_node))
+        node = res.register(res.success(left_node))
         if res.error:
-            return res.failure(InvalidSyntaxError(self.current_tok.pos_start,self.current_tok.pos_end,"Expected 'define',int,float,identifier,'+','-' or '('"))
+            return res.failure(InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end,
+                                                  "Expected 'define',int,float,identifier,'+','-' or '('"))
         return res.success(node)

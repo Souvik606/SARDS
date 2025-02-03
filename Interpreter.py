@@ -137,6 +137,25 @@ class Interpreter:
         """
         raise Exception(f'No visit_{type(node).__name__} method defined')
 
+    def visit_IfNode(self,node,context):
+        res=RunTimeResult()
+
+        for condition,expression in node.cases:
+            condition_value=res.register(self.visit(condition,context))
+            if res.error: return res
+
+            if condition_value.value!=0:
+                expression_value=res.register(self.visit(expression,context))
+                if res.error:return res
+                return res.success(expression_value)
+
+        if node.else_case:
+            else_value=res.register(self.visit(node.else_case,context))
+            if res.error:return res
+            return res.success(else_value)
+
+        return res.success(None)
+
     def visit_VariableUseNode(self,node,context):
         res=RunTimeResult()
         var_name=node.var_name_tok.value

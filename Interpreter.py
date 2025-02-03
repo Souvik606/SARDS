@@ -11,7 +11,7 @@ Classes:
 """
 
 from NumberDataType import Number
-from constants import T_PLUS, T_MINUS, T_MUL, T_DIVIDE
+from constants import *
 
 
 class Context:
@@ -138,18 +138,16 @@ class Interpreter:
         raise Exception(f'No visit_{type(node).__name__} method defined')
 
     def visit_VariableUseNode(self,node,context):
-        print("Inside varuse")
         res=RunTimeResult()
         var_name=node.var_name_tok.value
         value=context.symbol_table.get(var_name)
 
-        if value is not None:
+        if value is None:
             return res.failure(RuntimeError(node.pos_start,node.pos_end,f"'{var_name}' is not defined",context))
 
         return res.success(value)
 
     def visit_VariableAssignNode(self,node,context):
-        print("Inside varass")
         res=RunTimeResult()
         var_name=node.var_name_tok.value
         value=res.register(self.visit(node.value_node,context))
@@ -161,7 +159,6 @@ class Interpreter:
         return res.success(value)
 
     def visit_NumberNode(self, node, context):
-        print("Inside numnode")
         """
         Evaluates a number node.
 
@@ -177,7 +174,6 @@ class Interpreter:
         )
 
     def visit_BinaryOperationNode(self, node, context):
-        print("Inside binop")
         """
         Evaluates a binary operation node (e.g., addition, subtraction).
 

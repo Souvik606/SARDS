@@ -211,7 +211,6 @@ class Parser:
             return res.success(VariableAssignNode(var_name, expression))
 
         elif self.current_tok.type==T_IDENTIFIER:
-            print("hello")
             var_name=self.current_tok
             res.register_advancement()
             self.advance()

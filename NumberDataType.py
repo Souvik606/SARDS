@@ -123,6 +123,41 @@ class Number:
                 )
             return Number(self.value / operand.value).set_context(self.context), None
 
+    def get_comparison_eq(self,operand):
+        if isinstance(operand, Number):
+            return Number(int(self.value==operand.value)).set_context(self.context),None
+
+    def get_comparison_neq(self,operand):
+        if isinstance(operand, Number):
+            return Number(int(self.value!=operand.value)).set_context(self.context),None
+
+    def get_comparison_lte(self,operand):
+        if isinstance(operand, Number):
+            return Number(int(self.value<=operand.value)).set_context(self.context),None
+
+    def get_comparison_lt(self, operand):
+        if isinstance(operand, Number):
+            return Number(int(self.value < operand.value)).set_context(self.context), None
+
+    def get_comparison_gte(self,operand):
+        if isinstance(operand, Number):
+            return Number(int(self.value>=operand.value)).set_context(self.context),None
+
+    def get_comparison_gt(self, operand):
+        if isinstance(operand, Number):
+            return Number(int(self.value > operand.value)).set_context(self.context), None
+
+    def and_by(self,operand):
+        if isinstance(operand,Number):
+            return Number(int(self.value and operand.value)).set_context(self.context),None
+
+    def or_by(self,operand):
+        if isinstance(operand,Number):
+            return Number(int(self.value or operand.value)).set_context(self.context),None
+
+    def not_by(self):
+        return Number(int(not self.value)).set_context(self.context),None
+
     def __repr__(self):
         """
         Returns a string representation of the Number instance.

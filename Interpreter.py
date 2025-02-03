@@ -201,6 +201,22 @@ class Interpreter:
             result, error = left_node.multiply(right_node)
         elif node.operator.type == T_DIVIDE:
             result, error = left_node.divide(right_node)
+        elif node.operator.type == T_EE:
+            result, error = left_node.get_comparison_eq(right_node)
+        elif node.operator.type == T_NEQ:
+            result, error = left_node.get_comparison_neq(right_node)
+        elif node.operator.type == T_GT:
+            result, error = left_node.get_comparison_gt(right_node)
+        elif node.operator.type == T_GTE:
+            result, error = left_node.get_comparison_gte(right_node)
+        elif node.operator.type == T_LT:
+            result, error = left_node.get_comparison_lt(right_node)
+        elif node.operator.type == T_LTE:
+            result, error = left_node.get_comparison_lte(right_node)
+        elif node.operator.type==T_KEYWORD and node.operator.value=='and':
+            result,error=left_node.and_by(right_node)
+        elif node.operator.type==T_KEYWORD and node.operator.value=='or':
+            result,error=left_node.or_by(right_node)
 
         if error:
             return res.failure(error)
@@ -226,6 +242,9 @@ class Interpreter:
         error = None
         if node.operator.type == T_MINUS:
             number, error = number.multiply(Number(-1))
+
+        elif node.operator.type==T_KEYWORD and node.operator.value=='not':
+            number,error=number.not_by()
 
         if error:
             return res.failure(error)

@@ -36,6 +36,7 @@ class Context:
         self.display_name = display_name
         self.parent = parent
         self.parent_entry_pos = parent_entry_pos
+        self.symbol_table=None
 
 
 class RunTimeResult:
@@ -136,7 +137,31 @@ class Interpreter:
         """
         raise Exception(f'No visit_{type(node).__name__} method defined')
 
+    def visit_VariableUseNode(self,node,context):
+        print("Inside varuse")
+        res=RunTimeResult()
+        var_name=node.var_name_tok.value
+        value=context.symbol_table.get(var_name)
+
+        if value is not None:
+            return res.failure(RuntimeError(node.pos_start,node.pos_end,f"'{var_name}' is not defined",context))
+
+        return res.success(value)
+
+    def visit_VariableAssignNode(self,node,context):
+        print("Inside varass")
+        res=RunTimeResult()
+        var_name=node.var_name_tok.value
+        value=res.register(self.visit(node.value_node,context))
+
+        if res.error:
+            return res
+
+        context.symbol_table.set(var_name,value)
+        return res.success(value)
+
     def visit_NumberNode(self, node, context):
+        print("Inside numnode")
         """
         Evaluates a number node.
 
@@ -152,6 +177,7 @@ class Interpreter:
         )
 
     def visit_BinaryOperationNode(self, node, context):
+        print("Inside binop")
         """
         Evaluates a binary operation node (e.g., addition, subtraction).
 

@@ -75,6 +75,18 @@ class Lexer:
         self.pos.advance(self.current_char)
         self.current_char = self.text[self.pos.index] if self.pos.index < len(self.text) else None
 
+    def make_identifier(self):
+        id_str=''
+        pos_start=self.pos.copy()
+
+        while self.current_char is not None and self.current_char in LETTERS_DIGITS+'_':
+            id_str+=self.current_char
+            self.advance()
+
+        token_type=T_KEYWORD if id_str in KEYWORDS else T_IDENTIFIER
+        return Token(token_type,id_str,pos_start,self.pos)
+
+
     def make_number(self):
         """
         Extracts a numerical value (integer or float) from the input text.
@@ -113,6 +125,8 @@ class Lexer:
                 self.advance()
             elif self.current_char in DIGITS:
                 tokens.append(self.make_number())
+            elif self.current_char in LETTERS:
+                tokens.append(self.make_identifier())
             elif self.current_char == '+':
                 tokens.append(Token(T_PLUS, pos_start=self.pos))
                 self.advance()
@@ -124,6 +138,9 @@ class Lexer:
                 self.advance()
             elif self.current_char == '/':
                 tokens.append(Token(T_DIVIDE, pos_start=self.pos))
+                self.advance()
+            elif self.current_char == '=':
+                tokens.append(Token(T_EQ, pos_start=self.pos))
                 self.advance()
             elif self.current_char == '(':
                 tokens.append(Token(T_LPAREN, pos_start=self.pos))

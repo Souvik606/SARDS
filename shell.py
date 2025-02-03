@@ -59,7 +59,7 @@ def run(filename, text):
     """
     lexer = Lexer(filename, text)  # Initialize the Lexer with the input text
     tokens, error = lexer.enumerate_tokens()  # Generate tokens
-    print(tokens)
+
     # If lexical analysis encounters an error, return it
     if error:
         return None, error
@@ -71,8 +71,6 @@ def run(filename, text):
     # Return the parsed AST and any errors encountered
     if syntax_tree.error:
         return None,syntax_tree.error
-
-    print(syntax_tree.node)
 
     interpreter=Interpreter()
     context=Context('<program>')

@@ -30,6 +30,7 @@ from Error_Class import *
 from constants import *
 from variablesNode import *
 from if_else_elif_statements import *
+from for_loop import *
 
 
 class ParseResult:
@@ -139,6 +140,68 @@ class Parser:
             return result.failure(
                 InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '+', '-', '*', '/'"))
         return result
+
+    def for_expression(self):
+        res=ParseResult()
+        step_value=None
+
+        if not(self.current_tok.type==T_KEYWORD and self.current_tok.value=='Cycle'):
+            return res.failure(InvalidSyntaxError(self.current_tok.pos_start,self.current_tok.pos_end,"Expected 'Cycle'"))
+
+        res.register_advancement()
+        self.advance()
+
+        if not self.current_tok.type==T_IDENTIFIER:
+            return res.failure(InvalidSyntaxError(self.current_tok.pos_start,self.current_tok.pos_end,"Expected identifier"))
+
+        var_name=self.current_tok
+        res.register_advancement()
+        self.advance()
+
+        if not self.current_tok.type==T_EQ:
+            return res.failure(InvalidSyntaxError(self.current_tok.pos_start,self.current_tok.pos_end,"Expected '='"))
+
+        res.register_advancement()
+        self.advance()
+
+        start_value=res.register(self.expression())
+        if res.error: return res
+
+        if not self.current_tok.type==T_COLON:
+            return res.failure(InvalidSyntaxError(self.current_tok.pos_start,self.current_tok.pos_end,"Expected ':'"))
+
+        res.register_advancement()
+        self.advance()
+
+        end_value=res.register(self.expression())
+        if res.error:return res
+
+        if self.current_tok.type==T_COLON:
+            res.register_advancement()
+            self.advance()
+
+            step_value=res.register(self.expression())
+            if res.error:return res
+
+        if not self.current_tok.type==T_LPAREN2:
+            return res.failure(InvalidSyntaxError(self.current_tok.pos_start,self.current_tok.pos_end,"Expected '{'"))
+
+        res.register_advancement()
+        self.advance()
+
+        if self.current_tok.type == T_IDENTIFIER and self.peek() and self.peek().type == T_EQ:
+            body_node = res.register(self.statements())
+        else:
+            body_node = res.register(self.expression())
+        if res.error: return res
+
+        if not self.current_tok.type == T_RPAREN2:
+            return res.failure(InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '}'"))
+
+        res.register_advancement()
+        self.advance()
+
+        return res.success(ForNode(var_name,start_value,end_value,step_value,body_node))
 
     def if_expression(self):
         res = ParseResult()
@@ -272,6 +335,11 @@ class Parser:
             if_expr = res.register(self.if_expression())
             if res.error: return res
             return res.success(if_expr)
+
+        elif token.type == T_KEYWORD and token.value == 'Cycle':
+            for_expr = res.register(self.for_expression())
+            if res.error: return res
+            return res.success(for_expr)
 
         return res.failure(
             InvalidSyntaxError(token.pos_start, token.pos_end, "Expected int, float,identifier,'+','-'or '('"))

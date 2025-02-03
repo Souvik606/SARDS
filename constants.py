@@ -31,8 +31,9 @@ T_LPAREN = 'LPAREN'  # Left parenthesis (
 T_RPAREN = 'RPAREN'  # Right parenthesis )
 T_LPAREN2 = 'LPAREN2'
 T_RPAREN2 = 'RPAREN2'
+T_COLON = 'COLON'
 T_EOF = 'EOF'  # End of File
 
 # Keywords list
 
-KEYWORDS = ['define', 'and', 'or', 'not','when','orwhen','otherwise']
+KEYWORDS = ['define', 'and', 'or', 'not', 'when', 'orwhen', 'otherwise', 'Cycle']

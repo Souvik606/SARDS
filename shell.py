@@ -26,7 +26,11 @@ as an Abstract Syntax Tree (AST).
 from Lexer import *  # Importing the lexer module for tokenization
 from Parser import * # Importing the parser module for syntax analysis
 from Interpreter import *
+from variablesNode import *
+from NumberDataType import *
 
+global_symbol_table=SymbolTable()
+global_symbol_table.set("null",Number(0))
 
 def run(filename, text):
     """
@@ -70,6 +74,7 @@ def run(filename, text):
 
     interpreter=Interpreter()
     context=Context('<program>')
+    context.symbol_table=global_symbol_table
     result=interpreter.visit(syntax_tree.node,context)
 
     return result.value, result.error

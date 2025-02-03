@@ -11,7 +11,7 @@ Classes:
 """
 
 from NumberDataType import Number
-from constants import T_PLUS, T_MINUS, T_MUL, T_DIVIDE
+from constants import *
 
 
 class Context:
@@ -36,6 +36,7 @@ class Context:
         self.display_name = display_name
         self.parent = parent
         self.parent_entry_pos = parent_entry_pos
+        self.symbol_table=None
 
 
 class RunTimeResult:
@@ -135,6 +136,27 @@ class Interpreter:
         - Exception: Indicates that the node type is unsupported.
         """
         raise Exception(f'No visit_{type(node).__name__} method defined')
+
+    def visit_VariableUseNode(self,node,context):
+        res=RunTimeResult()
+        var_name=node.var_name_tok.value
+        value=context.symbol_table.get(var_name)
+
+        if value is None:
+            return res.failure(RuntimeError(node.pos_start,node.pos_end,f"'{var_name}' is not defined",context))
+
+        return res.success(value)
+
+    def visit_VariableAssignNode(self,node,context):
+        res=RunTimeResult()
+        var_name=node.var_name_tok.value
+        value=res.register(self.visit(node.value_node,context))
+
+        if res.error:
+            return res
+
+        context.symbol_table.set(var_name,value)
+        return res.success(value)
 
     def visit_NumberNode(self, node, context):
         """

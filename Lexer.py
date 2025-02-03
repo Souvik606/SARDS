@@ -16,6 +16,7 @@ Functions:
 from Error_Class import *
 from constants import *
 
+
 class Token:
     """
     Represents a token in the input with a specific type and optional value.
@@ -48,6 +49,7 @@ class Token:
         """
         return f'{self.type}: {self.value}' if self.value is not None else f'{self.type}'
 
+
 class Lexer:
     """
     Performs lexical analysis by reading input text and generating tokens.
@@ -76,16 +78,59 @@ class Lexer:
         self.current_char = self.text[self.pos.index] if self.pos.index < len(self.text) else None
 
     def make_identifier(self):
-        id_str=''
-        pos_start=self.pos.copy()
+        id_str = ''
+        pos_start = self.pos.copy()
 
-        while self.current_char is not None and self.current_char in LETTERS_DIGITS+'_':
-            id_str+=self.current_char
+        while self.current_char is not None and self.current_char in LETTERS_DIGITS + '_':
+            id_str += self.current_char
             self.advance()
 
-        token_type=T_KEYWORD if id_str in KEYWORDS else T_IDENTIFIER
-        return Token(token_type,id_str,pos_start,self.pos)
+        token_type = T_KEYWORD if id_str in KEYWORDS else T_IDENTIFIER
+        return Token(token_type, id_str, pos_start, self.pos)
 
+    def make_equals(self):
+        pos_start = self.pos.copy()
+        self.advance()
+        token_type=T_EQ
+
+        if self.current_char == '=':
+            self.advance()
+            token_type=T_EE
+
+        return Token(token_type,pos_start=pos_start,pos_end=self.pos)
+
+    def make_not_equals(self):
+        pos_start = self.pos.copy()
+        self.advance()
+
+        if self.current_char == '=':
+            self.advance()
+            return Token(T_NEQ, pos_start=pos_start, pos_end=self.pos), None
+
+        self.advance()
+        return None, ExpectedCharError(pos_start, self.pos, "'=' (after !)")
+
+    def make_lesser(self):
+        pos_start = self.pos.copy()
+        self.advance()
+        token_type = T_LT
+
+        if self.current_char == '=':
+            self.advance()
+            token_type = T_LTE
+
+        return Token(token_type, pos_start=pos_start, pos_end=self.pos)
+
+    def make_greater(self):
+        pos_start = self.pos.copy()
+        self.advance()
+        token_type = T_GT
+
+        if self.current_char == '=':
+            self.advance()
+            token_type = T_GTE
+
+        return Token(token_type, pos_start=pos_start, pos_end=self.pos)
 
     def make_number(self):
         """
@@ -108,7 +153,8 @@ class Lexer:
                 number += self.current_char
             self.advance()
 
-        return Token(T_FLOAT, float(number), pos_start, self.pos) if is_float else Token(T_INT, int(number), pos_start, self.pos)
+        return Token(T_FLOAT, float(number), pos_start, self.pos) if is_float else Token(T_INT, int(number), pos_start,
+                                                                                         self.pos)
 
     def enumerate_tokens(self):
         """
@@ -140,8 +186,14 @@ class Lexer:
                 tokens.append(Token(T_DIVIDE, pos_start=self.pos))
                 self.advance()
             elif self.current_char == '=':
-                tokens.append(Token(T_EQ, pos_start=self.pos))
-                self.advance()
+                tokens.append(self.make_equals())
+            elif self.current_char == '!':
+                tok, error = self.make_not_equals()
+                if error: return [], error
+            elif self.current_char == '>':
+                tokens.append(self.make_greater())
+            elif self.current_char == '<':
+                tokens.append(self.make_lesser())
             elif self.current_char == '(':
                 tokens.append(Token(T_LPAREN, pos_start=self.pos))
                 self.advance()

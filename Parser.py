@@ -228,8 +228,56 @@ class Parser:
 
         return res.failure(InvalidSyntaxError(self.current_tok.pos_start,self.current_tok.pos_end,"Expected 'define' or identifier"))
 
-
     def expression(self):
+        res=ParseResult()
+
+        left_node=res.register(self.comp_expression())
+        if res.error:return res
+
+        while self.current_tok and self.current_tok.type==T_KEYWORD and self.current_tok.value in ('and','or'):
+            operator=self.current_tok
+            res.register_advancement()
+            self.advance()
+
+            right_node=res.register(self.comp_expression())
+            if res.error:return res
+
+            left_node=BinaryOperationNode(left_node,operator,right_node)
+
+        node=res.register(res.success(left_node))
+        if res.error:
+            return res.failure(InvalidSyntaxError(self.current_tok.pos_start,self.current_tok.pos_end,"Expected int,float,identifier"))
+        return res.success(node)
+
+    def comp_expression(self):
+        res=ParseResult()
+
+        if self.current_tok.type==T_KEYWORD and self.current_tok.value=='not':
+            operator_token=self.current_tok
+            res.register_advancement()
+            self.advance()
+
+            node=res.register(self.comp_expression())
+            if res.error: return res
+            return res.success(UnaryOperationNode(operator_token,node))
+
+        left_node=res.register(self.arith_expression())
+        if res.error:return res
+
+        while self.current_tok and self.current_tok.type in (T_EE,T_LT,T_GT,T_GTE,T_LTE):
+            operator=self.current_tok
+            res.register_advancement()
+            self.advance()
+            right_node=res.register(self.arith_expression())
+            if res.error: return res
+            left_node=BinaryOperationNode(left_node,operator,right_node)
+
+        node=res.register(res.success(left_node))
+        if res.error:
+            return res.failure(InvalidSyntaxError(self.current_tok.pos_start,self.current_tok.pos_end,"Expected int,float,identifier,'+','-','not' or '('"))
+        return res.success(node)
+
+    def arith_expression(self):
         """Parses full expressions, handling addition and subtraction operations."""
         res=ParseResult()
         left_node = res.register(self.term())

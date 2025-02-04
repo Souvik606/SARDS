@@ -266,7 +266,7 @@ class Interpreter:
         elif node.operator.type == T_DIVIDE:
             result, error = left_node.divide(right_node)
         elif node.operator.type == T_EXP:
-            result, error = left_node.exponet(right_node)
+            result, error = left_node.exponent(right_node)
         elif node.operator.type == T_EE:
             result, error = left_node.get_comparison_eq(right_node)
         elif node.operator.type == T_NEQ:

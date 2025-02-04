@@ -190,6 +190,7 @@ class Lexer:
             elif self.current_char == '!':
                 tok, error = self.make_not_equals()
                 if error: return [], error
+                tokens.append(tok)
             elif self.current_char == '>':
                 tokens.append(self.make_greater())
             elif self.current_char == '<':

@@ -13,6 +13,7 @@ Classes:
 from NumberDataType import *
 from constants import *
 from FunctionType import Function
+from string_data_type import *
 
 
 class Context:
@@ -137,6 +138,11 @@ class Interpreter:
         - Exception: Indicates that the node type is unsupported.
         """
         raise Exception(f'No visit_{type(node).__name__} method defined')
+
+    def visit_StringNode(self,node,context):
+        return RunTimeResult().success(
+            String(node.token.value).set_context(context).set_pos(node.pos_start, node.pos_end)
+        )
 
     def visit_FunctionDefinitionNode(self, node, context):
         res = RunTimeResult()

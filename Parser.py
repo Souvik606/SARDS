@@ -33,6 +33,7 @@ from if_else_elif_statements import *
 from for_loop import *
 from while_loop import *
 from user_functions import *
+from string_data_type import *
 
 
 class ParseResult:
@@ -465,6 +466,11 @@ class Parser:
             res.register_advancement()
             self.advance()
             return res.success(NumberNode(token))
+
+        elif token.type==T_STRING:
+            res.register_advancement()
+            self.advance()
+            return res.success(StringNode(token))
 
         elif token.type == T_IDENTIFIER:
             res.register_advancement()

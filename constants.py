@@ -6,8 +6,6 @@ and token types for mathematical expressions.
 """
 import string
 
-from basic import TT_COMMA
-
 # Set of characters representing numerical digits
 DIGITS = '0123456789'
 LETTERS = string.ascii_letters

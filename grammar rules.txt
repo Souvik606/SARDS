@@ -24,7 +24,7 @@ Grammar Rules:
   - Left associative, meaning operations are performed from left to right.
   - Example: 3 + 5 - 2
 
-- term : factor ((MUL | DIV) factor)*
+- term : factor ((MUL | DIV | EXP) factor)*
   - Defines multiplication and division, which have higher precedence than addition/subtraction.
   - Ensures multiplication and division are evaluated before addition/subtraction.
   - Example: 3 * 4 / 2
@@ -39,8 +39,9 @@ Grammar Rules:
 Operator Precedence:
 1. Parentheses (`()`) – Highest precedence
 2. Unary operators (`+`, `-`)
-3. Multiplication and Division (`*`, `/`)
-4. Addition and Subtraction (`+`, `-`)
+3. Exponentiation (`**`)
+4. Multiplication and Division (`*`, `/`)
+5. Addition and Subtraction (`+`, `-`)
 
 Usage:
 - The grammar ensures correct parsing of expressions by following precedence rules.

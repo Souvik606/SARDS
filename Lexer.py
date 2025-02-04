@@ -91,13 +91,13 @@ class Lexer:
     def make_equals(self):
         pos_start = self.pos.copy()
         self.advance()
-        token_type=T_EQ
+        token_type = T_EQ
 
         if self.current_char == '=':
             self.advance()
-            token_type=T_EE
+            token_type = T_EE
 
-        return Token(token_type,pos_start=pos_start,pos_end=self.pos)
+        return Token(token_type, pos_start=pos_start, pos_end=self.pos)
 
     def make_not_equals(self):
         pos_start = self.pos.copy()
@@ -131,6 +131,28 @@ class Lexer:
             token_type = T_GTE
 
         return Token(token_type, pos_start=pos_start, pos_end=self.pos)
+
+    def make_string(self):
+        string = ''
+        pos_start = self.pos.copy()
+        escape_character = False
+        self.advance()
+
+        escape_characters = {'n': '\n', 't': '\t'}
+
+        while self.current_char is not None and self.current_char != '"' or escape_character:
+            if escape_character:
+                string += escape_characters.get(self.current_char, self.current_char)
+            else:
+                if self.current_char == '\\':
+                    escape_character = True
+                else:
+                    string += self.current_char
+            self.advance()
+            escape_character = False
+
+        self.advance()
+        return Token(T_STRING, string, pos_start, self.pos)
 
     def make_number(self):
         """
@@ -173,6 +195,8 @@ class Lexer:
                 tokens.append(self.make_number())
             elif self.current_char in LETTERS:
                 tokens.append(self.make_identifier())
+            elif self.current_char == '"':
+                tokens.append(self.make_string())
             elif self.current_char == '+':
                 tokens.append(Token(T_PLUS, pos_start=self.pos))
                 self.advance()

@@ -13,7 +13,8 @@ LETTERS_DIGITS = DIGITS + LETTERS
 
 # Token Types for mathematical operations and symbols
 T_INT = 'INT'  # Integer number token
-T_FLOAT = 'FLOAT'  # Floating-point number token
+T_FLOAT = 'FLOAT'# Floating-point number token
+T_STRING='STRING'
 T_IDENTIFIER = 'IDENTIFIER'  # Identifier token
 T_KEYWORD = 'KEYWORD'
 T_PLUS = 'PLUS'  # Addition operator (+)

@@ -6,6 +6,8 @@ and token types for mathematical expressions.
 """
 import string
 
+from basic import TT_COMMA
+
 # Set of characters representing numerical digits
 DIGITS = '0123456789'
 LETTERS = string.ascii_letters
@@ -32,8 +34,9 @@ T_RPAREN = 'RPAREN'  # Right parenthesis )
 T_LPAREN2 = 'LPAREN2'
 T_RPAREN2 = 'RPAREN2'
 T_COLON = 'COLON'
+T_COMMA='COMMA'
 T_EOF = 'EOF'  # End of File
 
 # Keywords list
 
-KEYWORDS = ['define', 'and', 'or', 'not', 'when', 'orwhen', 'otherwise', 'Cycle','whenever']
+KEYWORDS = ['define', 'and', 'or', 'not', 'when', 'orwhen', 'otherwise', 'Cycle','whenever','method']

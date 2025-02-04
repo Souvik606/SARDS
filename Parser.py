@@ -31,6 +31,7 @@ from constants import *
 from variablesNode import *
 from if_else_elif_statements import *
 from for_loop import *
+from while_loop import *
 
 
 class ParseResult:
@@ -140,6 +141,38 @@ class Parser:
             return result.failure(
                 InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '+', '-', '*', '/'"))
         return result
+
+    def while_expression(self):
+        res=ParseResult()
+
+        if not(self.current_tok.type==T_KEYWORD and self.current_tok.value=='whenever'):
+            return res.failure(InvalidSyntaxError(self.current_tok.pos_start,self.current_tok.pos_end,"Expected 'whenever'"))
+
+        res.register_advancement()
+        self.advance()
+
+        condition=res.register(self.expression())
+        if res.error:return res
+
+        if not self.current_tok.type==T_LPAREN2:
+            return res.failure(InvalidSyntaxError(self.current_tok.pos_start,self.current_tok.pos_end,"Expected '{'"))
+
+        res.register_advancement()
+        self.advance()
+
+        if self.current_tok.type == T_IDENTIFIER and self.peek() and self.peek().type == T_EQ:
+            body_node = res.register(self.statements())
+        else:
+            body_node = res.register(self.expression())
+        if res.error: return res
+
+        if not self.current_tok.type == T_RPAREN2:
+            return res.failure(InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '}'"))
+
+        res.register_advancement()
+        self.advance()
+
+        return res.success(WhileNode(condition,body_node))
 
     def for_expression(self):
         res=ParseResult()
@@ -340,6 +373,11 @@ class Parser:
             for_expr = res.register(self.for_expression())
             if res.error: return res
             return res.success(for_expr)
+
+        elif token.type == T_KEYWORD and token.value == 'whenever':
+            while_expr = res.register(self.while_expression())
+            if res.error: return res
+            return res.success(while_expr)
 
         return res.failure(
             InvalidSyntaxError(token.pos_start, token.pos_end, "Expected int, float,identifier,'+','-'or '('"))

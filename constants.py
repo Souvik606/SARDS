@@ -29,8 +29,12 @@ T_LTE = 'LESSERTHANEQUAL'
 T_GTE = 'GREATERTHANEQUAL'
 T_LPAREN = 'LPAREN'  # Left parenthesis (
 T_RPAREN = 'RPAREN'  # Right parenthesis )
+T_LPAREN2 = 'LPAREN2'
+T_RPAREN2 = 'RPAREN2'
+T_COLON = 'COLON'
+T_COMMA='COMMA'
 T_EOF = 'EOF'  # End of File
 
 # Keywords list
 
-KEYWORDS = ['define', 'and', 'or', 'not']
+KEYWORDS = ['define', 'and', 'or', 'not', 'when', 'orwhen', 'otherwise', 'Cycle','whenever','method']

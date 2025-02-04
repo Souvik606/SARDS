@@ -67,7 +67,7 @@ def run(filename, text):
 
     # Pass the tokens to the parser
     parser = Parser(tokens)
-    syntax_tree = parser.parse()  # Generate AST
+    syntax_tree = parser.parse() # Generate AST
 
     # Return the parsed AST and any errors encountered
     if syntax_tree.error:
@@ -89,5 +89,5 @@ while True:
     # Print errors if encountered, otherwise display the AST
     if errors:
         print(errors.to_string())
-    else:
+    elif result:
         print(result)

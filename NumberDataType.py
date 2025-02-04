@@ -149,14 +149,15 @@ class Number:
 
     def and_by(self,operand):
         if isinstance(operand,Number):
-            return Number(int(self.value and operand.value)).set_context(self.context),None
+            return Number(int(self.value!=0 and operand.value!=0)).set_context(self.context),None
 
     def or_by(self,operand):
         if isinstance(operand,Number):
-            return Number(int(self.value or operand.value)).set_context(self.context),None
+            return Number(int(self.value!=0 or operand.value!=0)).set_context(self.context),None
 
     def not_by(self):
         return Number(int(not self.value)).set_context(self.context),None
+
 
     def __repr__(self):
         """

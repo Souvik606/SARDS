@@ -10,8 +10,9 @@ Classes:
 - Interpreter: Evaluates AST nodes and executes operations.
 """
 
-from NumberDataType import Number
+from NumberDataType import *
 from constants import *
+from FunctionType import Function
 
 
 class Context:
@@ -36,7 +37,7 @@ class Context:
         self.display_name = display_name
         self.parent = parent
         self.parent_entry_pos = parent_entry_pos
-        self.symbol_table=None
+        self.symbol_table = None
 
 
 class RunTimeResult:
@@ -137,25 +138,119 @@ class Interpreter:
         """
         raise Exception(f'No visit_{type(node).__name__} method defined')
 
-    def visit_VariableUseNode(self,node,context):
-        res=RunTimeResult()
-        var_name=node.var_name_tok.value
-        value=context.symbol_table.get(var_name)
+    def visit_FunctionDefinitionNode(self, node, context):
+        res = RunTimeResult()
+
+        func_name = node.var_name_tok.value if node.var_name_tok else None
+        body_node = node.body_node
+        arg_names = [arg_name.value for arg_name in node.arg_name_toks]
+        func_value = Function(func_name, body_node, arg_names).set_context(context).set_pos(node.pos_start,
+                                                                            node.pos_end)
+
+        if node.var_name_tok:
+            context.symbol_table.set(func_name, func_value)
+
+        return res.success(func_value)
+
+    def visit_FunctionCallNode(self, node, context):
+        res = RunTimeResult()
+        args = []
+
+        call_value = res.register(self.visit(node.call_node, context))
+        if res.error: return res
+        call_value = call_value.copy().set_pos(node.pos_start, node.pos_end)
+
+        for arg_node in node.arg_nodes:
+            args.append(res.register(self.visit(arg_node, context)))
+            if res.error: return res
+
+        return_value = res.register(call_value.execute(args))
+        if res.error: return res
+        return res.success(return_value)
+
+    def visit_WhileNode(self, node, context):
+        res = RunTimeResult()
+
+        while True:
+            condition = res.register(self.visit(node.condition_node, context))
+            if res.error: return res
+
+            if not condition.value: break
+
+            res.register(self.visit(node.body_node, context))
+            if res.error: return res
+
+        return res.success(None)
+
+    def visit_ForNode(self, node, context):
+        res = RunTimeResult()
+
+        start_value = res.register(self.visit(node.start_value_node, context))
+        if res.error: return res
+
+        end_value = res.register(self.visit(node.end_value_node, context))
+        if res.error: return res
+
+        if node.step_value_node:
+            step_value = res.register(self.visit(node.step_value_node, context))
+            if res.error: return res
+        else:
+            step_value = Number(1)
+
+        i = start_value.value
+
+        if step_value.value >= 0:
+            condition = lambda: i <= end_value.value
+        else:
+            condition = lambda: i >= end_value.value
+
+        while condition():
+            context.symbol_table.set(node.var_name_tok.value, Number(i))
+            i += step_value.value
+
+            res.register(self.visit(node.body_node, context))
+            if res.error: return res
+
+        return res.success(None)
+
+    def visit_IfNode(self, node, context):
+        res = RunTimeResult()
+
+        for condition, expression in node.cases:
+            condition_value = res.register(self.visit(condition, context))
+            if res.error: return res
+
+            if condition_value.value != 0:
+                expression_value = res.register(self.visit(expression, context))
+                if res.error: return res
+                return res.success(expression_value)
+
+        if node.else_case:
+            else_value = res.register(self.visit(node.else_case, context))
+            if res.error: return res
+            return res.success(else_value)
+
+        return res.success(None)
+
+    def visit_VariableUseNode(self, node, context):
+        res = RunTimeResult()
+        var_name = node.var_name_tok.value
+        value = context.symbol_table.get(var_name)
 
         if value is None:
-            return res.failure(RuntimeError(node.pos_start,node.pos_end,f"'{var_name}' is not defined",context))
+            return res.failure(RuntimeError(node.pos_start, node.pos_end, f"'{var_name}' is not defined", context))
 
         return res.success(value)
 
-    def visit_VariableAssignNode(self,node,context):
-        res=RunTimeResult()
-        var_name=node.var_name_tok.value
-        value=res.register(self.visit(node.value_node,context))
+    def visit_VariableAssignNode(self, node, context):
+        res = RunTimeResult()
+        var_name = node.var_name_tok.value
+        value = res.register(self.visit(node.value_node, context))
 
         if res.error:
             return res
 
-        context.symbol_table.set(var_name,value)
+        context.symbol_table.set(var_name, value)
         return res.success(value)
 
     def visit_NumberNode(self, node, context):
@@ -213,10 +308,10 @@ class Interpreter:
             result, error = left_node.get_comparison_lt(right_node)
         elif node.operator.type == T_LTE:
             result, error = left_node.get_comparison_lte(right_node)
-        elif node.operator.type==T_KEYWORD and node.operator.value=='and':
-            result,error=left_node.and_by(right_node)
-        elif node.operator.type==T_KEYWORD and node.operator.value=='or':
-            result,error=left_node.or_by(right_node)
+        elif node.operator.type == T_KEYWORD and node.operator.value == 'and':
+            result, error = left_node.and_by(right_node)
+        elif node.operator.type == T_KEYWORD and node.operator.value == 'or':
+            result, error = left_node.or_by(right_node)
 
         if error:
             return res.failure(error)
@@ -243,8 +338,8 @@ class Interpreter:
         if node.operator.type == T_MINUS:
             number, error = number.multiply(Number(-1))
 
-        elif node.operator.type==T_KEYWORD and node.operator.value=='not':
-            number,error=number.not_by()
+        elif node.operator.type == T_KEYWORD and node.operator.value == 'not':
+            number, error = number.not_by()
 
         if error:
             return res.failure(error)

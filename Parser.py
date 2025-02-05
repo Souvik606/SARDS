@@ -28,6 +28,7 @@ Methods:
 
 from Error_Class import *
 from constants import *
+from list_data_type import ListNode
 from variablesNode import *
 from if_else_elif_statements import *
 from for_loop import *
@@ -143,6 +144,42 @@ class Parser:
             return result.failure(
                 InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '+', '-', '*', '/'"))
         return result
+
+    def list_expression(self):
+        res=ParseResult()
+        element_nodes=[]
+        pos_start=self.current_tok.pos_start.copy()
+
+        if self.current_tok.type!=T_LPAREN3:
+            return res.failure(InvalidSyntaxError(self.current_tok.pos_start,self.current_tok.pos_end,f"Expected '['"))
+
+        res.register_advancement()
+        self.advance()
+
+        if self.current_tok.type==T_RPAREN3:
+            res.register_advancement()
+            self.advance()
+        else:
+            element_nodes.append(res.register(self.expression()))
+            if res.error: return res
+            while self.current_tok and self.current_tok.type == T_COMMA:
+                res.register_advancement()
+                self.advance()
+
+                element_nodes.append(res.register(self.expression()))
+                if res.error: return res
+
+            if self.current_tok.type != T_RPAREN3:
+                print(self.current_tok)
+                return res.failure(
+                    InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, f"Expected ',' or ']"))
+
+            res.register_advancement()
+            self.advance()
+
+        return res.success(ListNode(element_nodes,pos_start,self.current_tok.pos_end.copy()))
+
+
 
     def function_definition(self):
         res = ParseResult()
@@ -510,6 +547,11 @@ class Parser:
             method_expr = res.register(self.function_definition())
             if res.error: return res
             return res.success(method_expr)
+
+        elif token.type==T_LPAREN3:
+            list_expression=res.register(self.list_expression())
+            if res.error:return res
+            return res.success(list_expression)
 
         return res.failure(
             InvalidSyntaxError(token.pos_start, token.pos_end, "Expected int, float,identifier,'+','-'or '('"))

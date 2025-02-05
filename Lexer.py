@@ -231,6 +231,12 @@ class Lexer:
             elif self.current_char == '}':
                 tokens.append(Token(T_RPAREN2, pos_start=self.pos))
                 self.advance()
+            elif self.current_char == '[':
+                tokens.append(Token(T_LPAREN3, pos_start=self.pos))
+                self.advance()
+            elif self.current_char == ']':
+                tokens.append(Token(T_RPAREN3, pos_start=self.pos))
+                self.advance()
             elif self.current_char == ':':
                 tokens.append(Token(T_COLON, pos_start=self.pos))
                 self.advance()

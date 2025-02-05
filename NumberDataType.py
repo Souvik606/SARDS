@@ -162,6 +162,12 @@ class Number:
     def is_true(self):
         return Number(int(self.value != 0))
 
+    def copy(self):
+        copy = Number(self.value)
+        copy.set_pos(self.pos_start, self.pos_end)
+        copy.set_context(self.context)
+        return copy
+
     def __repr__(self):
         """
         Returns a string representation of the Number instance.

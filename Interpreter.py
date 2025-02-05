@@ -157,6 +157,7 @@ class Interpreter:
         )
 
     def visit_FunctionDefinitionNode(self, node, context):
+        from FunctionType import Function
         res = RunTimeResult()
 
         func_name = node.var_name_tok.value if node.var_name_tok else None
@@ -184,6 +185,8 @@ class Interpreter:
 
         return_value = res.register(call_value.execute(args))
         if res.error: return res
+        return_value=return_value.copy().set_pos(node.pos_start,node.pos_end).set_context(context)
+
         return res.success(return_value)
 
     def visit_WhileNode(self, node, context):
@@ -261,6 +264,7 @@ class Interpreter:
         if value is None:
             return res.failure(RuntimeError(node.pos_start, node.pos_end, f"'{var_name}' is not defined", context))
 
+        value=value.copy().set_pos(node.pos_start,node.pos_end).set_context(context)
         return res.success(value)
 
     def visit_VariableAssignNode(self, node, context):

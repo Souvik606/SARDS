@@ -22,7 +22,7 @@ as an Abstract Syntax Tree (AST).
    - Displays either the parsed AST or an error message.
 
 """
-
+from FunctionType import *
 from Lexer import *  # Importing the lexer module for tokenization
 from Parser import *  # Importing the parser module for syntax analysis
 from Interpreter import *
@@ -30,8 +30,14 @@ from variablesNode import *
 from NumberDataType import *
 
 global_symbol_table = SymbolTable()
-global_symbol_table.set("null", Number(0))
+global_symbol_table.set("None", Number(0))
+global_symbol_table.set("True",Number(1))
+global_symbol_table.set("False",Number(0))
 
+global_symbol_table.set("show",BuiltInFunction.show)
+global_symbol_table.set("listen",BuiltInFunction.listen)
+global_symbol_table.set("Integer",BuiltInFunction.Integer)
+global_symbol_table.set("type",BuiltInFunction.type)
 
 def run(filename, text):
     """

@@ -42,5 +42,8 @@ class String:
         copy.set_context(self.context)
         return copy
 
+    def __str__(self):
+        return f'{self.value}'
+
     def __repr__(self):
         return f'"{self.value}"'

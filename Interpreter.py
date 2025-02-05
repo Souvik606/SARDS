@@ -12,6 +12,8 @@ Classes:
 
 from NumberDataType import *
 from constants import *
+from FunctionType import Function
+from string_data_type import *
 from list_data_type import *
 
 

@@ -663,7 +663,7 @@ class Parser:
         left_node = res.register(self.arith_expression())
         if res.error: return res
 
-        while self.current_tok and self.current_tok.type in (T_EE, T_LT, T_GT, T_GTE, T_LTE):
+        while self.current_tok and self.current_tok.type in (T_EE, T_NEQ, T_LT, T_GT, T_GTE, T_LTE):
             operator = self.current_tok
             res.register_advancement()
             self.advance()

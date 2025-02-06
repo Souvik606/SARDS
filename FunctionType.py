@@ -3,6 +3,7 @@ from list_data_type import List
 from variablesNode import *
 from string_data_type import *
 
+
 class BaseFunction():
     def __init__(self, name):
         self.name = name or "<anonymous>"
@@ -55,10 +56,11 @@ class BaseFunction():
 
 
 class Function(BaseFunction):
-    def __init__(self, name, body_node, arg_names):
+    def __init__(self, name, body_node, arg_names, return_null):
         super().__init__(name)
         self.body_node = body_node
         self.arg_names = arg_names
+        self.return_null = return_null
 
     def execute(self, args):
         from Interpreter import RunTimeResult, Interpreter, Context
@@ -72,10 +74,10 @@ class Function(BaseFunction):
 
         value = res.register(interpreter.visit(self.body_node, exec_context))
         if res.error: return res
-        return res.success(value)
+        return res.success(Number(0) if self.return_null else value)
 
     def copy(self):
-        copy = Function(self.name, self.body_node, self.arg_names)
+        copy = Function(self.name, self.body_node, self.arg_names, self.return_null)
         copy.set_context(self.context)
         copy.set_pos(self.pos_start, self.pos_end)
         return copy
@@ -120,15 +122,15 @@ class BuiltInFunction(BaseFunction):
 
     execute_show.arg_names = ['value']
 
-    def execute_listen(self,exec_context):
-        text=input()
+    def execute_listen(self, exec_context):
+        text = input()
         return RunTimeResult().success(String(text))
 
     execute_listen.arg_names = []
 
-    def execute_Integer(self,exec_context):
+    def execute_Integer(self, exec_context):
         try:
-            number=int(exec_context.symbol_table.get('value').value)
+            number = int(exec_context.symbol_table.get('value').value)
         except ValueError:
             raise Exception("Value Error: Cant convert to integer")
 
@@ -136,19 +138,31 @@ class BuiltInFunction(BaseFunction):
 
     execute_Integer.arg_names = ['value']
 
-    def execute_type(self,exec_context):
-        data=exec_context.symbol_table.get('value')
-        if isinstance(data,Number):
+    def execute_String(self, exec_context):
+        try:
+            string = str(exec_context.symbol_table.get('value').value)
+        except ValueError:
+            raise Exception("Value Error: Cant convert to string")
+
+        return RunTimeResult().success(String(string))
+
+    execute_String.arg_names = ['value']
+
+    def execute_type(self, exec_context):
+        data = exec_context.symbol_table.get('value')
+        if isinstance(data, Number):
             print("type <Number>")
-        elif isinstance(data,String):
+        elif isinstance(data, String):
             print("type <String>")
-        elif isinstance(data,List):
+        elif isinstance(data, List):
             print("type <List>")
         return RunTimeResult().success(Number(0))
 
-    execute_type.arg_names=['value']
+    execute_type.arg_names = ['value']
 
-BuiltInFunction.show=BuiltInFunction('show')
-BuiltInFunction.listen=BuiltInFunction('listen')
-BuiltInFunction.Integer=BuiltInFunction('Integer')
-BuiltInFunction.type=BuiltInFunction('type')
+
+BuiltInFunction.show = BuiltInFunction('show')
+BuiltInFunction.listen = BuiltInFunction('listen')
+BuiltInFunction.Integer = BuiltInFunction('Integer')
+BuiltInFunction.String = BuiltInFunction('String')
+BuiltInFunction.type = BuiltInFunction('type')

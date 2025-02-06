@@ -12,6 +12,7 @@ Classes:
 
 from NumberDataType import *
 from constants import *
+from list_data_type import *
 
 
 class Context:
@@ -137,8 +138,58 @@ class Interpreter:
         """
         raise Exception(f'No visit_{type(node).__name__} method defined')
 
+    def visit_ListNode(self, node, context):
+        res = RunTimeResult()
+        elements = []
+
+        for element_node in node.element_nodes:
+            elements.append(res.register(self.visit(element_node, context)))
+            if res.error: return res
+
+        return res.success(List(elements).set_context(context).set_pos(node.pos_start, node.pos_end))
+
+    def visit_StringNode(self, node, context):
+        return RunTimeResult().success(
+            String(node.token.value).set_context(context).set_pos(node.pos_start, node.pos_end)
+        )
+
+    def visit_FunctionDefinitionNode(self, node, context):
+        from FunctionType import Function
+        res = RunTimeResult()
+
+        func_name = node.var_name_tok.value if node.var_name_tok else None
+        body_node = node.body_node
+        arg_names = [arg_name.value for arg_name in node.arg_name_toks]
+        func_value = Function(func_name, body_node, arg_names, node.return_null).set_context(context).set_pos(
+            node.pos_start,
+            node.pos_end)
+
+        if node.var_name_tok:
+            context.symbol_table.set(func_name, func_value)
+
+        return res.success(func_value)
+
+    def visit_FunctionCallNode(self, node, context):
+        res = RunTimeResult()
+        args = []
+
+        call_value = res.register(self.visit(node.call_node, context))
+        if res.error: return res
+        call_value = call_value.copy().set_pos(node.pos_start, node.pos_end)
+
+        for arg_node in node.arg_nodes:
+            args.append(res.register(self.visit(arg_node, context)))
+            if res.error: return res
+
+        return_value = res.register(call_value.execute(args))
+        if res.error: return res
+        return_value = return_value.copy().set_pos(node.pos_start, node.pos_end).set_context(context)
+
+        return res.success(return_value)
+
     def visit_WhileNode(self, node, context):
         res = RunTimeResult()
+        elements = []
 
         while True:
             condition = res.register(self.visit(node.condition_node, context))
@@ -146,13 +197,16 @@ class Interpreter:
 
             if not condition.value: break
 
-            res.register(self.visit(node.body_node, context))
+            elements.append(res.register(self.visit(node.body_node, context)))
             if res.error: return res
 
-        return res.success(None)
+        return res.success(
+            Number(0) if node.return_null else List(elements).set_context(context).set_pos(node.pos_start,
+                                                                                           node.pos_end))
 
     def visit_ForNode(self, node, context):
         res = RunTimeResult()
+        elements = []
 
         start_value = res.register(self.visit(node.start_value_node, context))
         if res.error: return res
@@ -177,29 +231,32 @@ class Interpreter:
             context.symbol_table.set(node.var_name_tok.value, Number(i))
             i += step_value.value
 
-            res.register(self.visit(node.body_node, context))
+            elements.append(res.register(self.visit(node.body_node, context)))
             if res.error: return res
 
-        return res.success(None)
+        return res.success(
+            Number(0) if node.return_null else List(elements).set_context(context).set_pos(node.pos_start,
+                                                                                           node.pos_end))
 
     def visit_IfNode(self, node, context):
         res = RunTimeResult()
 
-        for condition, expression in node.cases:
+        for condition, expression, return_null in node.cases:
             condition_value = res.register(self.visit(condition, context))
             if res.error: return res
 
             if condition_value.value != 0:
                 expression_value = res.register(self.visit(expression, context))
                 if res.error: return res
-                return res.success(expression_value)
+                return res.success(Number(0) if return_null else expression_value)
 
         if node.else_case:
+            expression,return_null=node.else_case
             else_value = res.register(self.visit(node.else_case, context))
             if res.error: return res
-            return res.success(else_value)
+            return res.success(Number(0) if return_null else else_value)
 
-        return res.success(None)
+        return res.success(Number(0))
 
     def visit_VariableUseNode(self, node, context):
         res = RunTimeResult()
@@ -209,6 +266,7 @@ class Interpreter:
         if value is None:
             return res.failure(RuntimeError(node.pos_start, node.pos_end, f"'{var_name}' is not defined", context))
 
+        value = value.copy().set_pos(node.pos_start, node.pos_end).set_context(context)
         return res.success(value)
 
     def visit_VariableAssignNode(self, node, context):

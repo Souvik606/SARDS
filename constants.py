@@ -13,7 +13,8 @@ LETTERS_DIGITS = DIGITS + LETTERS
 
 # Token Types for mathematical operations and symbols
 T_INT = 'INT'  # Integer number token
-T_FLOAT = 'FLOAT'  # Floating-point number token
+T_FLOAT = 'FLOAT'# Floating-point number token
+T_STRING='STRING'
 T_IDENTIFIER = 'IDENTIFIER'  # Identifier token
 T_KEYWORD = 'KEYWORD'
 T_PLUS = 'PLUS'  # Addition operator (+)
@@ -32,9 +33,13 @@ T_LPAREN = 'LPAREN'  # Left parenthesis (
 T_RPAREN = 'RPAREN'  # Right parenthesis )
 T_LPAREN2 = 'LPAREN2'
 T_RPAREN2 = 'RPAREN2'
+T_LPAREN3 = 'LPAREN3'
+T_RPAREN3 = 'RPAREN3'
 T_COLON = 'COLON'
+T_COMMA='COMMA'
+T_NEWLINE='NEWLINE'
 T_EOF = 'EOF'  # End of File
 
 # Keywords list
 
-KEYWORDS = ['define', 'and', 'or', 'not', 'when', 'orwhen', 'otherwise', 'Cycle','whenever']
+KEYWORDS = ['define', 'and', 'or', 'not', 'when', 'orwhen', 'otherwise', 'Cycle','whenever','method']

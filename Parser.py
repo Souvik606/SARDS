@@ -35,6 +35,7 @@ from for_loop import *
 from while_loop import *
 from user_functions import *
 from string_data_type import *
+from jump_statements import *
 
 
 class ParseResult:
@@ -165,8 +166,10 @@ class Parser:
 
         if self.current_tok.type == T_IDENTIFIER and self.peek() and self.peek().type == T_EQ:
             statement = res.register(self.statements())
+
         else:
             statement = res.register(self.expression())
+        if res.error:return res
         statements.append(statement)
 
         more_statements = True
@@ -184,6 +187,7 @@ class Parser:
 
             if self.current_tok.type == T_IDENTIFIER and self.peek() and self.peek().type == T_EQ:
                 statement = res.try_register(self.statements())
+
             else:
                 statement = res.try_register(self.expression())
 
@@ -310,7 +314,7 @@ class Parser:
             res.register_advancement()
             self.advance()
 
-            return res.success(FunctionDefinitionNode(var_name_tok, arg_name_toks, body,True))
+            return res.success(FunctionDefinitionNode(var_name_tok, arg_name_toks, body, True))
 
         if self.current_tok.type == T_IDENTIFIER and self.peek() and self.peek().type == T_EQ:
             body_node = res.register(self.statements())
@@ -324,7 +328,7 @@ class Parser:
         res.register_advancement()
         self.advance()
 
-        return res.success(FunctionDefinitionNode(var_name_tok, arg_name_toks, body_node,False))
+        return res.success(FunctionDefinitionNode(var_name_tok, arg_name_toks, body_node, False))
 
     def function_call(self):
         res = ParseResult()
@@ -396,7 +400,7 @@ class Parser:
             res.register_advancement()
             self.advance()
 
-            return res.success(WhileNode(condition,body,True))
+            return res.success(WhileNode(condition, body, True))
 
         if self.current_tok.type == T_IDENTIFIER and self.peek() and self.peek().type == T_EQ:
             body_node = res.register(self.statements())
@@ -410,7 +414,7 @@ class Parser:
         res.register_advancement()
         self.advance()
 
-        return res.success(WhileNode(condition, body_node,False))
+        return res.success(WhileNode(condition, body_node, False))
 
     def for_expression(self):
         res = ParseResult()
@@ -462,20 +466,21 @@ class Parser:
         res.register_advancement()
         self.advance()
 
-        if self.current_tok.type==T_NEWLINE:
+        if self.current_tok.type == T_NEWLINE:
             res.register_advancement()
             self.advance()
 
-            body=res.register(self.multiline())
+            body = res.register(self.multiline())
             if res.error: return res
 
             if not self.current_tok.type == T_RPAREN2:
-                return res.failure(InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '}'"))
+                return res.failure(
+                    InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '}'"))
 
             res.register_advancement()
             self.advance()
 
-            return res.success(ForNode(var_name,start_value,end_value,step_value,body,True))
+            return res.success(ForNode(var_name, start_value, end_value, step_value, body, True))
 
         if self.current_tok.type == T_IDENTIFIER and self.peek() and self.peek().type == T_EQ:
             body_node = res.register(self.statements())
@@ -489,7 +494,7 @@ class Parser:
         res.register_advancement()
         self.advance()
 
-        return res.success(ForNode(var_name, start_value, end_value, step_value, body_node,False))
+        return res.success(ForNode(var_name, start_value, end_value, step_value, body_node, False))
 
     def if_expression(self):
         res = ParseResult()
@@ -511,25 +516,26 @@ class Parser:
         res.register_advancement()
         self.advance()
 
-        if self.current_tok.type==T_NEWLINE:
+        if self.current_tok.type == T_NEWLINE:
             res.register_advancement()
             self.advance()
 
-            statements=res.register(self.multiline())
+            statements = res.register(self.multiline())
             if res.error: return res
             print(statements)
-            cases.append((condition,statements,True))
+            cases.append((condition, statements, True))
 
-            if self.current_tok.type!=T_RPAREN2:
-                print("hui hui",self.current_tok)
-                return res.failure(InvalidSyntaxError(self.current_tok.pos_start,self.current_tok.pos_end,"Expected '}'"))
+            if self.current_tok.type != T_RPAREN2:
+                print("hui hui", self.current_tok)
+                return res.failure(
+                    InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '}'"))
 
             res.register_advancement()
             self.advance()
 
-            all_cases=res.register(self.elif_or_else_expression())
+            all_cases = res.register(self.elif_or_else_expression())
             if res.error: return res
-            new_cases,else_case=all_cases
+            new_cases, else_case = all_cases
             cases.extend(new_cases)
 
         else:
@@ -538,10 +544,10 @@ class Parser:
             else:
                 expression = res.register(self.expression())
             if res.error: return res
-            cases.append((condition, expression,False))
+            cases.append((condition, expression, False))
 
             if self.current_tok.type != T_RPAREN2:
-                print("hello",self.current_tok)
+                print("hello", self.current_tok)
                 return res.failure(
                     InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '}'"))
 
@@ -556,18 +562,18 @@ class Parser:
         return res.success(IfNode(cases, else_case))
 
     def elif_or_else_expression(self):
-        res=ParseResult()
-        cases,else_case=[],None
+        res = ParseResult()
+        cases, else_case = [], None
 
-        if self.current_tok.type==T_KEYWORD and self.current_tok.value=='orwhen':
-            all_cases=res.register(self.elif_expression())
-            if res.error:return res
-            cases,else_case=all_cases
+        if self.current_tok.type == T_KEYWORD and self.current_tok.value == 'orwhen':
+            all_cases = res.register(self.elif_expression())
+            if res.error: return res
+            cases, else_case = all_cases
         else:
-            else_case=res.register(self.else_expression())
+            else_case = res.register(self.else_expression())
             if res.error: return res
 
-        return res.success((cases,else_case))
+        return res.success((cases, else_case))
 
     def elif_expression(self):
         res = ParseResult()
@@ -629,13 +635,13 @@ class Parser:
             new_cases, else_case = all_cases
             cases.extend(new_cases)
 
-        return res.success((cases,else_case))
+        return res.success((cases, else_case))
 
     def else_expression(self):
-        res=ParseResult()
-        else_case=None
+        res = ParseResult()
+        else_case = None
 
-        if self.current_tok.type==T_KEYWORD and self.current_tok.value=='otherwise':
+        if self.current_tok.type == T_KEYWORD and self.current_tok.value == 'otherwise':
             res.register_advancement()
             self.advance()
 
@@ -646,13 +652,13 @@ class Parser:
             res.register_advancement()
             self.advance()
 
-            if self.current_tok.type==T_NEWLINE:
+            if self.current_tok.type == T_NEWLINE:
                 res.register_advancement()
                 self.advance()
 
-                statements=res.register(self.multiline())
+                statements = res.register(self.multiline())
                 if res.error: return res
-                else_case=(statements,True)
+                else_case = (statements, True)
 
                 if not self.current_tok.type == T_RPAREN2:
                     return res.failure(
@@ -668,10 +674,9 @@ class Parser:
                     expression = res.register(self.expression())
                 if res.error: return res
 
-                else_case=(expression,False)
+                else_case = (expression, False)
 
         return res.success(else_case)
-
 
     def factor(self):
         """Parses factors (numbers, parentheses, and unary operations)."""
@@ -815,6 +820,25 @@ class Parser:
 
     def expression(self):
         res = ParseResult()
+
+        if self.current_tok.type == T_KEYWORD and self.current_tok.value == 'yield':
+            res.register_advancement()
+            self.advance()
+
+            expression = res.try_register(self.expression())
+            if not expression:
+                self.reverse(res.to_reverse_count)
+            return res.success(ReturnNode(expression, self.current_tok.pos_start.copy(), self.current_tok.pos_start.copy()))
+
+        elif self.current_tok.type == T_KEYWORD and self.current_tok.value == 'proceed':
+            res.register_advancement()
+            self.advance()
+            return res.success(ContinueNode(self.current_tok.pos_start.copy(), self.current_tok.pos_start.copy()))
+
+        elif self.current_tok.type == T_KEYWORD and self.current_tok.value == 'escape':
+            res.register_advancement()
+            self.advance()
+            return res.success(BreakNode(self.current_tok.pos_start.copy(), self.current_tok.pos_start.copy()))
 
         left_node = res.register(self.comp_expression())
         if res.error: return res

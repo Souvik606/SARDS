@@ -219,7 +219,6 @@ class Lexer:
                 self.advance()
             elif self.current_char == '*':
                 tokens.append(self.make_mul())
-                self.advance()
             elif self.current_char == '/':
                 tokens.append(Token(T_DIVIDE, pos_start=self.pos))
                 self.advance()

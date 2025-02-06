@@ -42,4 +42,4 @@ T_EOF = 'EOF'  # End of File
 
 # Keywords list
 
-KEYWORDS = ['define', 'and', 'or', 'not', 'when', 'orwhen', 'otherwise', 'Cycle','whenever','method']
+KEYWORDS = ['define', 'and', 'or', 'not', 'when', 'orwhen', 'otherwise', 'Cycle','whenever','method','yield','escape','proceed']

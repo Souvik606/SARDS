@@ -36,6 +36,7 @@ T_LPAREN3 = 'LPAREN3'
 T_RPAREN3 = 'RPAREN3'
 T_COLON = 'COLON'
 T_COMMA='COMMA'
+T_NEWLINE='NEWLINE'
 T_EOF = 'EOF'  # End of File
 
 # Keywords list

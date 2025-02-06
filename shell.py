@@ -37,6 +37,7 @@ global_symbol_table.set("False",Number(0))
 global_symbol_table.set("show",BuiltInFunction.show)
 global_symbol_table.set("listen",BuiltInFunction.listen)
 global_symbol_table.set("Integer",BuiltInFunction.Integer)
+global_symbol_table.set("String",BuiltInFunction.String)
 global_symbol_table.set("type",BuiltInFunction.type)
 
 def run(filename, text):
@@ -94,6 +95,7 @@ while True:
 
     # Print errors if encountered, otherwise display the AST
     if errors:
+        print(errors)
         print(errors.to_string())
     elif result:
         print(result)

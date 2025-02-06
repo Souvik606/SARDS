@@ -35,6 +35,7 @@ from for_loop import *
 from while_loop import *
 from user_functions import *
 from string_data_type import *
+from jump_statements import *
 
 
 class ParseResult:
@@ -168,6 +169,7 @@ class Parser:
 
         else:
             statement = res.register(self.expression())
+        if res.error:return res
         statements.append(statement)
 
         more_statements = True
@@ -818,6 +820,25 @@ class Parser:
 
     def expression(self):
         res = ParseResult()
+
+        if self.current_tok.type == T_KEYWORD and self.current_tok.value == 'yield':
+            res.register_advancement()
+            self.advance()
+
+            expression = res.try_register(self.expression())
+            if not expression:
+                self.reverse(res.to_reverse_count)
+            return res.success(ReturnNode(expression, self.current_tok.pos_start.copy(), self.current_tok.pos_start.copy()))
+
+        elif self.current_tok.type == T_KEYWORD and self.current_tok.value == 'proceed':
+            res.register_advancement()
+            self.advance()
+            return res.success(ContinueNode(self.current_tok.pos_start.copy(), self.current_tok.pos_start.copy()))
+
+        elif self.current_tok.type == T_KEYWORD and self.current_tok.value == 'escape':
+            res.register_advancement()
+            self.advance()
+            return res.success(BreakNode(self.current_tok.pos_start.copy(), self.current_tok.pos_start.copy()))
 
         left_node = res.register(self.comp_expression())
         if res.error: return res

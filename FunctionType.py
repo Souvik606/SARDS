@@ -50,17 +50,17 @@ class BaseFunction():
     def check_and_populate_args(self, arg_names, args, context):
         res = RunTimeResult()
         res.register(self.check_args(arg_names, args))
-        if res.error: return res
+        if res.should_return(): return res
         self.populate_args(arg_names, args, context)
         return res.success(None)
 
 
 class Function(BaseFunction):
-    def __init__(self, name, body_node, arg_names, return_null):
+    def __init__(self, name, body_node, arg_names, auto_return):
         super().__init__(name)
         self.body_node = body_node
         self.arg_names = arg_names
-        self.return_null = return_null
+        self.auto_return = auto_return
 
     def execute(self, args):
         from Interpreter import RunTimeResult, Interpreter, Context
@@ -70,14 +70,16 @@ class Function(BaseFunction):
         exec_context = self.generate_new_context()
 
         res.register(self.check_and_populate_args(self.arg_names, args, exec_context))
-        if res.error: return res
+        if res.should_return(): return res
 
         value = res.register(interpreter.visit(self.body_node, exec_context))
-        if res.error: return res
-        return res.success(Number(0) if self.return_null else value)
+        if res.should_return() and res.func_return_value==None: return res
+
+        return_value=(value if self.auto_return else None) or res.func_return_value or Number(0)
+        return res.success(return_value)
 
     def copy(self):
-        copy = Function(self.name, self.body_node, self.arg_names, self.return_null)
+        copy = Function(self.name, self.body_node, self.arg_names, self.auto_return)
         copy.set_context(self.context)
         copy.set_pos(self.pos_start, self.pos_end)
         return copy
@@ -98,10 +100,10 @@ class BuiltInFunction(BaseFunction):
         method = getattr(self, method_name, self.no_visit_method)
 
         res.register(self.check_and_populate_args(method.arg_names, args, exec_context))
-        if res.error: return res
+        if res.should_return(): return res
 
         return_value = res.register(method(exec_context))
-        if res.error: return res
+        if res.should_return(): return res
         return res.success(return_value)
 
     def no_visit_method(self, node, context):

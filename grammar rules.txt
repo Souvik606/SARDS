@@ -6,7 +6,7 @@ statements:(KEYWORD:define)? IDENTIFIER EQUAL expression
 
 expression: jump_statements |ternary-expression
 
-ternary-expression: logical-expression (QUESTION ternary-expression COLON ternary-expression)*
+ternary-expression: (logical-expression|statements) (QUESTION ternary-expression COLON ternary-expression)*
 
 logical-expression:comp-expression ((KEYWORD:AND | KEYWORD:OR) comp-expression)*
 

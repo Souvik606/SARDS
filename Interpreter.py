@@ -353,16 +353,16 @@ class Interpreter:
         comp_node = res.register(self.visit(node.comp_node, context))
         if res.should_return():
             return res
-        true_node = res.register(self.visit(node.true_node, context))
-        if res.should_return():
-            return res
-        false_node = res.register(self.visit(node.false_node, context))
-        if res.should_return():
-            return res
         
         if comp_node.is_true():
+            true_node = res.register(self.visit(node.true_node, context))
+            if res.should_return():
+                return res
             result, error = true_node, None
         else:
+            false_node = res.register(self.visit(node.false_node, context))
+            if res.should_return():
+                return res
             result, error = false_node, None
                 
         if error:

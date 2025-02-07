@@ -4,19 +4,21 @@ jump-statements:KEYWORD:yield expression|KEYWORD:proceed|KEYWORD:escape
 
 statements:(KEYWORD:define)? IDENTIFIER EQUAL expression
 
-expression: jump_statements|comp-expression((KEYWORD:AND|OR)comp-expression)*
+ternary-expression: comp-expression QUESTION (comp-expression|ternary-expression*) COLON (comp-expression|ternary-expression*)
 
-comp-expression: KEYWORD:NOT comp-expression|arith-expression((EE|NEQ|LT|GT|LTE|GTE) arith-expression)*
+expression: jump_statements | comp-expression ((KEYWORD:AND | KEYWORD:OR) comp-expression)* | ternary-expression
 
-arith-expression : term ((PLUS|MINUS) term)*
+comp-expression: KEYWORD:NOT comp-expression | arith-expression ((EE | NEQ | LT | GT | LTE | GTE) arith-expression)*
 
-term : unary((MUL|DIV) unary)*
+arith-expression: term ((PLUS | MINUS) term)*
 
-unary:(PLUS|MINUS) unary|exponent
+term: unary ((MUL | DIV) unary)*
+
+unary: (PLUS | MINUS) unary | exponent
 
 exponent: factor (EXP unary)*
 
-factor: INT|FLOAT|STRING|IDENTIFIER|LPAREN expression RPAREN| if-expression| for-expression| while-expression| function-definition| list-expression|function-call
+factor: INT | FLOAT | STRING | IDENTIFIER | LPAREN expression RPAREN | if-expression | for-expression | while-expression | function-definition | list-expression | function-call
 
 function-call: IDENTIFIER LPAREN (expression(COMMA expression)*)? RPAREN
 

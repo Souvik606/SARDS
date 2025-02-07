@@ -97,7 +97,18 @@ class Lexer:
             self.advance()
             token_type = T_EE
 
-        return Token(token_type, pos_start=pos_start, pos_end=self.pos)
+        return Token(token_type,pos_start=pos_start,pos_end=self.pos)
+    
+    def make_mul(self):
+        pos_start = self.pos.copy()
+        self.advance()
+        token_type=T_MUL
+
+        if self.current_char == '*':
+            self.advance()
+            token_type=T_EXP
+
+        return Token(token_type,pos_start=pos_start,pos_end=self.pos)
 
     def make_not_equals(self):
         pos_start = self.pos.copy()
@@ -207,8 +218,7 @@ class Lexer:
                 tokens.append(Token(T_MINUS, pos_start=self.pos))
                 self.advance()
             elif self.current_char == '*':
-                tokens.append(Token(T_MUL, pos_start=self.pos))
-                self.advance()
+                tokens.append(self.make_mul())
             elif self.current_char == '/':
                 tokens.append(Token(T_DIVIDE, pos_start=self.pos))
                 self.advance()

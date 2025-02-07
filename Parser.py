@@ -678,20 +678,47 @@ class Parser:
 
         return res.success(else_case)
 
+    def exponent(self):
+        res = ParseResult()
+        left_node = res.register(self.factor())
+        if res.error:
+            return res
+        while self.current_tok and self.current_tok.type==T_EXP:
+            operator = self.current_tok
+            res.register_advancement()
+            self.advance()
+            right_node = res.register(self.unary())
+            if res.error:
+                return res
+            left_node = BinaryOperationNode(left_node, operator, right_node)
+
+        node = res.register(res.success(left_node))
+        if res.error:
+            return res.failure(InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end,
+                                                  "Expected 'define',int,float,identifier,'+','-' or '('"))
+        return res.success(node)
+
+    def unary(self):
+        res=ParseResult()
+        token=self.current_tok
+
+        if token.type in (T_PLUS, T_MINUS):
+            res.register_advancement()
+            self.advance()
+            factor = res.register(self.unary())
+            if res.error:
+                return res
+            return res.success(UnaryOperationNode(token, factor))
+
+        return self.exponent()
+
+
     def factor(self):
         """Parses factors (numbers, parentheses, and unary operations)."""
         res = ParseResult()
         token = self.current_tok
 
-        if token.type in (T_PLUS, T_MINUS):
-            res.register_advancement()
-            self.advance()
-            factor = res.register(self.factor())
-            if res.error:
-                return res
-            return res.success(UnaryOperationNode(token, factor))
-
-        elif token.type in (T_INT, T_FLOAT):
+        if token.type in (T_INT, T_FLOAT):
             res.register_advancement()
             self.advance()
             return res.success(NumberNode(token))
@@ -757,7 +784,7 @@ class Parser:
             if res.error: return res
             return res.success(call_expression)
 
-        left_node = res.register(self.factor())
+        left_node = res.register(self.unary())
         if res.error:
             return res
 
@@ -765,7 +792,7 @@ class Parser:
             operator = self.current_tok
             res.register_advancement()
             self.advance()
-            right_node = res.register(self.factor())
+            right_node = res.register(self.unary())
             if res.error:
                 return res
             left_node = BinaryOperationNode(left_node, operator, right_node)

@@ -334,7 +334,13 @@ class Parser:
         res = ParseResult()
         arg_nodes = []
 
-        call_node = res.register(self.factor())
+        if self.current_tok.type==T_IDENTIFIER:
+            call_node=res.register(res.success(VariableUseNode(self.current_tok)))
+            res.register_advancement()
+            self.advance()
+        else:
+            res.failure(InvalidSyntaxError(self.current_tok.pos_start,self.current_tok.pos_end,"Expected identifier"))
+
         if res.error:
             return res
 
@@ -678,6 +684,20 @@ class Parser:
 
         return res.success(else_case)
 
+    def unary(self):
+        res=ParseResult()
+        token=self.current_tok
+
+        if token.type in (T_PLUS, T_MINUS):
+            res.register_advancement()
+            self.advance()
+            factor = res.register(self.unary())
+            if res.error:
+                return res
+            return res.success(UnaryOperationNode(token, factor))
+
+        return self.exponent()
+
     def exponent(self):
         res = ParseResult()
         left_node = res.register(self.factor())
@@ -698,20 +718,6 @@ class Parser:
                                                   "Expected 'define',int,float,identifier,'+','-' or '('"))
         return res.success(node)
 
-    def unary(self):
-        res=ParseResult()
-        token=self.current_tok
-
-        if token.type in (T_PLUS, T_MINUS):
-            res.register_advancement()
-            self.advance()
-            factor = res.register(self.unary())
-            if res.error:
-                return res
-            return res.success(UnaryOperationNode(token, factor))
-
-        return self.exponent()
-
 
     def factor(self):
         """Parses factors (numbers, parentheses, and unary operations)."""
@@ -727,6 +733,11 @@ class Parser:
             res.register_advancement()
             self.advance()
             return res.success(StringNode(token))
+
+        elif self.current_tok and self.current_tok.type == T_IDENTIFIER and self.peek() and self.peek().type == T_LPAREN:
+            call_expression = res.register(self.function_call())
+            if res.error: return res
+            return res.success(call_expression)
 
         elif token.type == T_IDENTIFIER:
             res.register_advancement()
@@ -778,11 +789,6 @@ class Parser:
     def term(self):
         """Parses terms, handling multiplication and division operations."""
         res = ParseResult()
-
-        if self.current_tok and self.current_tok.type == T_IDENTIFIER and self.peek() and self.peek().type == T_LPAREN:
-            call_expression = res.register(self.function_call())
-            if res.error: return res
-            return res.success(call_expression)
 
         left_node = res.register(self.unary())
         if res.error:

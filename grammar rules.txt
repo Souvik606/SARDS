@@ -10,13 +10,13 @@ comp-expression: KEYWORD:NOT comp-expression|arith-expression((EE|NEQ|LT|GT|LTE|
 
 arith-expression : term ((PLUS|MINUS) term)*
 
-term : unary((MUL|DIV) unary )*
+term : unary((MUL|DIV) unary)*
 
 unary:(PLUS|MINUS) unary|exponent
 
 exponent: factor (EXP unary)*
 
-factor: INT|FLOAT|STRING|IDENTIFIER|LPAREN expression RPAREN| if-expression| for-expression| while-expression| function-definition| list-expression||function-call
+factor: INT|FLOAT|STRING|IDENTIFIER|LPAREN expression RPAREN| if-expression| for-expression| while-expression| function-definition| list-expression|function-call
 
 function-call: IDENTIFIER LPAREN (expression(COMMA expression)*)? RPAREN
 

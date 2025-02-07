@@ -7,6 +7,9 @@ class ListNode:
         self.pos_start=pos_start
         self.pos_end=pos_end
 
+    def __repr__(self):
+        return f'[{", ".join([str(x) for x in self.element_nodes])}]'
+
 
 class List:
     def __init__(self, elements):
@@ -56,7 +59,6 @@ class List:
 
     def __repr__(self):
         return f'[{", ".join([str(x) for x in self.elements])}]'
-
 
     def copy(self):
         copy = List(self.elements)

@@ -732,38 +732,34 @@ class Parser:
                                                   "Expected 'define',int,float,identifier,'+','-' or '('"))
         return res.success(node)
 
-    # todo: comp-expression (QUESTION ternary-expression COLON ternary-expression)*
     def ternary_expression(self):
         res = ParseResult()
-        is_comp_expression = True
-        comp_node = res.register(self.comp_expression())
+        comp_node = res.register(self.logical_expression())
         if res.error:
             return res
         false_node = true_node = None
 
         while self.current_tok and self.current_tok.type == T_QUESTION:
-            is_comp_expression = False
             res.register_advancement()
             self.advance()
             true_node = res.register(self.ternary_expression())
+            print(true_node)
             if res.error:
                 return res
-            if self.current_tok and self.current_tok.type == T_COLON:
-                res.register_advancement()
-                self.advance()
-                false_node = res.register(self.ternary_expression())
-                if res.error:
-                    return res
-            else:
-                return res.failure(
-                    InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected ':' "))
+            if self.current_tok and not self.current_tok.type == T_COLON:
+                return res.failure(InvalidSyntaxError(self.current_tok.pos_start,self.current_tok.pos_end,"Expected ':' "))
 
-        if is_comp_expression:
-            res.success(comp_node)
-        else:
-            res.success(TernaryOperationNode(comp_node, true_node, false_node))
+            res.register_advancement()
+            self.advance()
+            false_node = res.register(self.ternary_expression())
+            if res.error:
+                return res
 
-    def ternary_or_comp_expression(self):
+        if not(true_node and false_node):return res.success(comp_node)
+
+        return res.success(TernaryOperationNode(comp_node, true_node, false_node))
+
+    '''def ternary_or_comp_expression(self):
         res = ParseResult()
         comp_node = res.register(self.comp_expression())
 
@@ -775,7 +771,7 @@ class Parser:
             else_case = res.register(self.else_expression())
             if res.error: return res
 
-        return res.success((cases, else_case))
+        return res.success((cases, else_case))'''
 
     def factor(self):
         """Parses factors (numbers, parentheses, and unary operations)."""
@@ -931,7 +927,19 @@ class Parser:
             res.register_advancement()
             self.advance()
             return res.success(BreakNode(self.current_tok.pos_start.copy(), self.current_tok.pos_start.copy()))
+        else:
+            ternary_node=res.register(self.ternary_expression())
+            if res.error:return res
+            node = res.register(res.success(ternary_node))
+            if res.error:
+                return res.failure(InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end,
+                                                      "Expected int,float,identifier"))
+            return res.success(node)
 
+
+    def logical_expression(self):
+
+        res=ParseResult()
         left_node = res.register(self.comp_expression())
         if res.error: return res
 

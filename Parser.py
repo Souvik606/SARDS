@@ -743,7 +743,6 @@ class Parser:
             res.register_advancement()
             self.advance()
             true_node = res.register(self.ternary_expression())
-            print(true_node)
             if res.error:
                 return res
             if self.current_tok and not self.current_tok.type == T_COLON:
@@ -758,20 +757,6 @@ class Parser:
         if not(true_node and false_node):return res.success(comp_node)
 
         return res.success(TernaryOperationNode(comp_node, true_node, false_node))
-
-    '''def ternary_or_comp_expression(self):
-        res = ParseResult()
-        comp_node = res.register(self.comp_expression())
-
-        if self.current_tok.type == T_QUESTION and self.current_tok.value == '?':
-            all_cases = res.register(self.elif_expression())
-            if res.error: return res
-            cases, else_case = all_cases
-        else:
-            else_case = res.register(self.else_expression())
-            if res.error: return res
-
-        return res.success((cases, else_case))'''
 
     def factor(self):
         """Parses factors (numbers, parentheses, and unary operations)."""

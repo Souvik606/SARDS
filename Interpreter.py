@@ -350,28 +350,25 @@ class Interpreter:
 
     def visit_TernaryOperationNode(self, node, context):
         res = RunTimeResult()
-        left_node = res.register(self.visit(node.left_node, context))
+        comp_node = res.register(self.visit(node.comp_node, context))
         if res.should_return():
             return res
-        right_node = res.register(self.visit(node.right_node, context))
+        true_node = res.register(self.visit(node.true_node, context))
         if res.should_return():
             return res
-
-        error = None
-        if node.operator.type == T_PLUS:
-            result, error = left_node.add(right_node)
-        elif node.operator.type == T_MINUS:
-            result, error = left_node.subtract(right_node)
-        elif node.operator.type == T_MUL:
-            result, error = left_node.multiply(right_node)
-        elif node.operator.type == T_DIVIDE:
-            result, error = left_node.divide(right_node)
-        elif node.operator.type == T_EXP:
-            result, error = left_node.exponent(right_node)
-        elif node.operator.type == T_EE:
-            result, error = left_node.get_comparison_eq(right_node)
-        elif node.operator.type == T_NEQ:
-            result, error = left_node.get_comparison_neq(right_node)
+        false_node = res.register(self.visit(node.false_node, context))
+        if res.should_return():
+            return res
+        
+        if comp_node.is_true():
+            result, error = true_node, None
+        else:
+            result, error = false_node, None
+                
+        if error:
+            return res.failure(error)
+        else:
+            return res.success(result.set_pos(node.pos_start, node.pos_end))
 
     def visit_UnaryOperationNode(self, node, context):
         res = RunTimeResult()

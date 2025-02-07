@@ -80,7 +80,8 @@ def run(filename, text):
     if syntax_tree.error:
         return None, syntax_tree.error
 
-    print(syntax_tree.node)
+    # For debugging parser's output
+    # print(syntax_tree.node) 
 
     interpreter = Interpreter()
     context = Context('<program>')

@@ -1,0 +1,43 @@
+name: Pull Request Template
+description: Describe the purpose of your pull request
+
+body:
+    - type: markdown
+      attributes:
+          value: |
+              ### Description
+              Please include a summary of the changes and the related issue. 
+              - What is the new behavior?
+              - Is this a breaking change?
+      validations:
+          required: true
+
+    - type: input
+      id: issue_id
+      attributes:
+          label: Related Issue ID
+          placeholder: "Enter the related issue ID"
+
+    - type: textarea
+      id: changes_made
+      attributes:
+          label: Changes Made
+          placeholder: "Describe the changes made"
+      validations:
+          required: true
+
+    - type: textarea
+      id: testing
+      attributes:
+          label: Testing
+          placeholder: "Describe how the changes were tested"
+
+    - type: dropdown
+      id: type_of_change
+      attributes:
+          label: Type of Change
+          options:
+              - Bug fix
+              - New feature
+              - Documentation
+              - Other

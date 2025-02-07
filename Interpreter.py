@@ -190,8 +190,7 @@ class Interpreter:
         while True:
             condition = res.register(self.visit(node.condition_node, context))
             if res.should_return(): return res
-
-            if not condition.value: break
+            if not condition.is_true(): break
 
             value = res.register(self.visit(node.body_node, context))
             if res.should_return() and res.loop_break == False and res.loop_continue == False: return res
@@ -251,7 +250,7 @@ class Interpreter:
             condition_value = res.register(self.visit(condition, context))
             if res.should_return(): return res
 
-            if condition_value.value != 0:
+            if condition_value.is_true():
                 expression_value = res.register(self.visit(expression, context))
                 if res.should_return(): return res
                 return res.success(Number(0) if return_null else expression_value)

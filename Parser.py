@@ -734,7 +734,10 @@ class Parser:
 
     def ternary_expression(self):
         res = ParseResult()
-        comp_node = res.register(self.logical_expression())
+        if self.current_tok.type == T_IDENTIFIER and self.peek() and self.peek().type == T_EQ:
+            comp_node = res.register(self.statements())
+        else:
+            comp_node = res.register(self.logical_expression())
         if res.error:
             return res
         false_node = true_node = None

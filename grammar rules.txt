@@ -4,7 +4,7 @@ jump-statements:KEYWORD:yield expression|KEYWORD:proceed|KEYWORD:escape
 
 statements:(KEYWORD:define)? IDENTIFIER EQUAL expression
 
-ternary-expression: comp-expression QUESTION (comp-expression|ternary-expression*) COLON (comp-expression|ternary-expression*)
+ternary-expression: comp-expression (QUESTION ternary-expression COLON ternary-expression)*
 
 expression: jump_statements | comp-expression ((KEYWORD:AND | KEYWORD:OR) comp-expression)* | ternary-expression
 

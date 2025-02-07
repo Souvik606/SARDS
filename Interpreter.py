@@ -10,7 +10,6 @@ Classes:
 - Interpreter: Evaluates AST nodes and executes operations.
 """
 
-from NumberDataType import *
 from constants import *
 from list_data_type import *
 
@@ -290,23 +289,22 @@ class Interpreter:
             Number(node.token.value).set_context(context).set_pos(node.pos_start, node.pos_end)
         )
 
-    def visit_ReturnNode(self,node,context):
-        res=RunTimeResult()
+    def visit_ReturnNode(self, node, context):
+        res = RunTimeResult()
 
         if node.node_to_return:
-            value=res.register(self.visit(node.node_to_return,context))
+            value = res.register(self.visit(node.node_to_return, context))
             if res.should_return(): return res
         else:
-            value=Number(0)
+            value = Number(0)
 
         return res.success_return(value)
 
-    def visit_ContinueNode(self,node,context):
+    def visit_ContinueNode(self, node, context):
         return RunTimeResult().success_continue()
 
-    def visit_BreakNode(self,node,context):
+    def visit_BreakNode(self, node, context):
         return RunTimeResult().success_break()
-
 
     def visit_BinaryOperationNode(self, node, context):
         res = RunTimeResult()
@@ -349,6 +347,31 @@ class Interpreter:
             return res.failure(error)
         else:
             return res.success(result.set_pos(node.pos_start, node.pos_end))
+
+    def visit_TernaryOperationNode(self, node, context):
+        res = RunTimeResult()
+        left_node = res.register(self.visit(node.left_node, context))
+        if res.should_return():
+            return res
+        right_node = res.register(self.visit(node.right_node, context))
+        if res.should_return():
+            return res
+
+        error = None
+        if node.operator.type == T_PLUS:
+            result, error = left_node.add(right_node)
+        elif node.operator.type == T_MINUS:
+            result, error = left_node.subtract(right_node)
+        elif node.operator.type == T_MUL:
+            result, error = left_node.multiply(right_node)
+        elif node.operator.type == T_DIVIDE:
+            result, error = left_node.divide(right_node)
+        elif node.operator.type == T_EXP:
+            result, error = left_node.exponent(right_node)
+        elif node.operator.type == T_EE:
+            result, error = left_node.get_comparison_eq(right_node)
+        elif node.operator.type == T_NEQ:
+            result, error = left_node.get_comparison_neq(right_node)
 
     def visit_UnaryOperationNode(self, node, context):
         res = RunTimeResult()

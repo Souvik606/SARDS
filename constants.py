@@ -39,6 +39,7 @@ T_COLON = 'COLON'
 T_COMMA='COMMA'
 T_NEWLINE='NEWLINE'
 T_EOF = 'EOF'  # End of File
+T_QUESTION = 'QUESTION'
 
 # Keywords list
 

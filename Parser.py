@@ -151,6 +151,7 @@ class Parser:
         result = self.multiline()
 
         if not result.error and self.current_tok.type != T_EOF:
+            print(self.current_tok)
             return result.failure(
                 InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '+', '-', '*', '/'"))
         return result
@@ -532,7 +533,6 @@ class Parser:
             cases.append((condition, statements, True))
 
             if self.current_tok.type != T_RPAREN2:
-                print("hui hui", self.current_tok)
                 return res.failure(
                     InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '}'"))
 
@@ -553,7 +553,6 @@ class Parser:
             cases.append((condition, expression, False))
 
             if self.current_tok.type != T_RPAREN2:
-                print("hello", self.current_tok)
                 return res.failure(
                     InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '}'"))
 
@@ -679,6 +678,13 @@ class Parser:
                 else:
                     expression = res.register(self.expression())
                 if res.error: return res
+
+                if not self.current_tok.type == T_RPAREN2:
+                    return res.failure(
+                        InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '}'"))
+
+                res.register_advancement()
+                self.advance()
 
                 else_case = (expression, False)
 

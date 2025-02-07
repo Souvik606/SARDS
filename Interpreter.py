@@ -257,7 +257,7 @@ class Interpreter:
 
         if node.else_case:
             expression, return_null = node.else_case
-            else_value = res.register(self.visit(node.else_case, context))
+            else_value = res.register(self.visit(expression, context))
             if res.should_return(): return res
             return res.success(Number(0) if return_null else else_value)
 

@@ -2,7 +2,7 @@ multiline: NEWLINE* (expression|statements|jump_statements) (NEWLINE* (expressio
 
 jump-statements:KEYWORD:yield expression|KEYWORD:proceed | KEYWORD:escape
 
-statements: (KEYWORD:define)? IDENTIFIER EQUAL expression | switch-statement
+statements: (KEYWORD:define)? IDENTIFIER EQUAL expression
 
 switch-statement: KEYWORD:menu ternary-expression LPAREN2 (case-statement)+ default-statement? RPAREN2
 
@@ -26,7 +26,7 @@ unary: (PLUS | MINUS) unary | exponent
 
 exponent: factor (EXP unary)*
 
-factor: INT | FLOAT | STRING | IDENTIFIER | LPAREN expression RPAREN | if-expression | for-expression | while-expression | function-definition | list-expression | function-call
+factor: INT | FLOAT | STRING | IDENTIFIER | LPAREN expression RPAREN | if-expression | for-expression | while-expression | function-definition | list-expression | function-call | switch-statement
 
 function-call: IDENTIFIER LPAREN (expression(COMMA expression)*)? RPAREN
 

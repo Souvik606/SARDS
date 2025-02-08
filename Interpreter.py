@@ -250,7 +250,24 @@ class Interpreter:
                                                                                            node.pos_end))
 
     def visit_SwitchNode(self, node, context):
-        return
+        res = RunTimeResult()
+
+        for selection, expression, return_null in node.cases:
+            case_value = res.register(self.visit(selection, context))
+            if res.should_return(): return res
+
+            if case_value.is_true():
+                expression_value = res.register(self.visit(expression, context))
+                if res.should_return(): return res
+                return res.success(Number(0) if return_null else expression_value)
+
+        if node.default_case:
+            expression, return_null = node.default_case
+            default_value = res.register(self.visit(expression, context))
+            if res.should_return(): return res
+            return res.success(Number(0) if return_null else default_value)
+
+        return res.success(Number(0))
 
     def visit_IfNode(self, node, context):
         res = RunTimeResult()

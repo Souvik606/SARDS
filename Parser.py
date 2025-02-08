@@ -36,7 +36,7 @@ from string_data_type import *
 from user_functions import *
 from variablesNode import *
 from while_loop import *
-
+from switch_statements import *
 
 class ParseResult:
     """Stores the result of a parsing operation, including errors and the parsed node."""
@@ -416,45 +416,16 @@ class Parser:
 
         res.register_advancement()
         self.advance()
-        while self.current_tok and self.current_tok.type == T_KEYWORD and self.current_tok.value == 'choice':
-            res.register_advancement()
-            self.advance()
-            choice_value = res.register(self.ternary_expression())
-            if res.error: return res
+        # (case-statement)+ default-statement?
 
-            if not self.current_tok.type == T_LPAREN2:
-                return res.failure(
-                    InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '{'"))
-
-            if self.current_tok.type == T_NEWLINE:
-                res.register_advancement()
-                self.advance()
-
-                body = res.register(self.multiline())
-                if res.error: return res
-
-                if not self.current_tok.type == T_RPAREN2:
-                    return res.failure(
-                        InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '}'"))
-
-                res.register_advancement()
-                self.advance()
-
-                return res.success(WhileNode(selection, body, True))
-
-            if self.current_tok.type == T_IDENTIFIER and self.peek() and self.peek().type == T_EQ:
-                body_node = res.register(self.statements())
-            else:
-                body_node = res.register(self.expression())
-            if res.error: return res
-
+        #
         if not self.current_tok.type == T_RPAREN2:
             return res.failure(InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '}'"))
 
         res.register_advancement()
         self.advance()
 
-        return res.success(WhileNode(selection, body_node, False))
+        return res.success(SwitchNode(selection, cases, defaultcase, False))
 
     def case_statement(self):
         res = ParseResult()
@@ -489,7 +460,7 @@ class Parser:
             res.register_advancement()
             self.advance()
 
-            return res.success(WhileNode(condition, body, True))
+            return res.success(CaseNode(choice_val, body, True))
 
         if self.current_tok.type == T_IDENTIFIER and self.peek() and self.peek().type == T_EQ:
             body_node = res.register(self.statements())
@@ -503,20 +474,17 @@ class Parser:
         res.register_advancement()
         self.advance()
 
-        return res.success(WhileNode(condition, body_node, False))
+        return res.success(CaseNode(choice_val, body_node, False))
 
     def default_statement(self):
         res = ParseResult()
 
-        if not (self.current_tok.type == T_KEYWORD and self.current_tok.value == 'whenever'):
+        if not (self.current_tok.type == T_KEYWORD and self.current_tok.value == 'fallback'):
             return res.failure(
-                InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected 'whenever'"))
+                InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected 'fallback'"))
 
         res.register_advancement()
         self.advance()
-
-        condition = res.register(self.expression())
-        if res.error: return res
 
         if not self.current_tok.type == T_LPAREN2:
             return res.failure(InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '{'"))
@@ -538,7 +506,7 @@ class Parser:
             res.register_advancement()
             self.advance()
 
-            return res.success(WhileNode(condition, body, True))
+            return res.success(CaseNode(None, body, True))
 
         if self.current_tok.type == T_IDENTIFIER and self.peek() and self.peek().type == T_EQ:
             body_node = res.register(self.statements())
@@ -552,7 +520,7 @@ class Parser:
         res.register_advancement()
         self.advance()
 
-        return res.success(WhileNode(condition, body_node, False))
+        return res.success(CaseNode(None, body_node, False))
 
     def while_expression(self):
         res = ParseResult()

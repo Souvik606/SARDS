@@ -250,6 +250,11 @@ class Interpreter:
                                                                                            node.pos_end))
 
     def visit_SwitchNode(self, node, context):
+        
+        return
+    
+    def visit_CaseNode(self, node, context):
+        
         return
 
     def visit_IfNode(self, node, context):

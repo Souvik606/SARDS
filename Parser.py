@@ -399,7 +399,7 @@ class Parser:
     default-statement: KEYWORD:fallback LPAREN2 ((expression|statements) RPAREN2)| NEWLINE multiline RPAREN2)
     
     menu variable {
-        case: hello
+        case{hello}
     }
     """
 
@@ -411,9 +411,10 @@ class Parser:
             return res.failure(
                 InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, f"Expected 'menu'"))
 
+        print("menu recognized")
+
         res.register_advancement()
         self.advance()
-
         selection = res.register(self.ternary_expression())
         if res.error: return res
 
@@ -426,6 +427,10 @@ class Parser:
         while self.current_tok.type == T_NEWLINE:
             res.register_advancement()
             self.advance()
+
+        if not self.current_tok.type == T_KEYWORD:
+            return res.failure(
+                InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected 'choice'"))
 
         all_cases = res.register(self.case_or_default_expression())
         if res.error: return res
@@ -451,7 +456,7 @@ class Parser:
         res.register_advancement()
         self.advance()
 
-        condition = res.register(self.expression())
+        condition = res.register(self.ternary_expression())
         if res.error: return res
 
         if not self.current_tok.type == T_LPAREN2:
@@ -559,7 +564,7 @@ class Parser:
             if res.error: return res
             cases, default_case = all_cases
         else:
-            else_case = res.register(self.default_statement())
+            default_case = res.register(self.default_statement())
             if res.error: return res
 
         return res.success((cases, default_case))
@@ -1007,6 +1012,11 @@ class Parser:
             list_expression = res.register(self.list_expression())
             if res.error: return res
             return res.success(list_expression)
+
+        elif token.type == T_KEYWORD and token.value == 'menu':
+            switch_statement = res.register(self.switch_statement())
+            if res.error: return res
+            return res.success(switch_statement)
 
         return res.failure(
             InvalidSyntaxError(token.pos_start, token.pos_end, "Expected int, float,identifier,'+','-'or '('"))

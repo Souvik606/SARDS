@@ -6,9 +6,9 @@ statements: (KEYWORD:define)? IDENTIFIER EQUAL expression
 
 switch-statement: KEYWORD:menu ternary-expression LPAREN2 (case-statement)+ default-statement? RPAREN2
 
-case-statement: KEYWORD:choice ternary-expression LPAREN2 ((expression|statements) RPAREN2)| NEWLINE multiline RPAREN2)
+case-statement: KEYWORD:choice ternary-expression LPAREN2 ((expression|statements) RPAREN2) | NEWLINE multiline RPAREN2)
 
-default-statement: KEYWORD:fallback LPAREN2 ((expression|statements) RPAREN2)| NEWLINE multiline RPAREN2)
+default-statement: KEYWORD:fallback LPAREN2 ((expression|statements) RPAREN2) | NEWLINE multiline RPAREN2)
 
 expression: jump_statements | ternary-expression
 

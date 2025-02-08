@@ -57,12 +57,14 @@ class RunTimeResult:
         self.func_return_value = None
         self.loop_continue = False
         self.loop_break = False
+        self.switch_break = False
 
     def register(self, res):
         self.error = res.should_return()
         self.func_return_value = res.func_return_value
         self.loop_continue = res.loop_continue
         self.loop_break = res.loop_break
+        self.switch_break = res.switch_break
         return res.value
 
     def success(self, value):
@@ -83,6 +85,11 @@ class RunTimeResult:
     def success_break(self):
         self.reset()
         self.loop_break = True
+        return self
+
+    def switch_break(self):
+        self.reset()
+        self.switch_break = True
         return self
 
     def failure(self, error):
@@ -242,6 +249,9 @@ class Interpreter:
             Number(0) if node.return_null else List(elements).set_context(context).set_pos(node.pos_start,
                                                                                            node.pos_end))
 
+    def visit_SwitchNode(self, node, context):
+        return
+
     def visit_IfNode(self, node, context):
         res = RunTimeResult()
 
@@ -306,6 +316,9 @@ class Interpreter:
     def visit_BreakNode(self, node, context):
         return RunTimeResult().success_break()
 
+    def visit_SwitchBreakNode(self, node, context):
+        return RunTimeResult().switch_break()
+
     def visit_BinaryOperationNode(self, node, context):
         res = RunTimeResult()
         left_node = res.register(self.visit(node.left_node, context))
@@ -353,7 +366,7 @@ class Interpreter:
         comp_node = res.register(self.visit(node.comp_node, context))
         if res.should_return():
             return res
-        
+
         if comp_node.is_true():
             true_node = res.register(self.visit(node.true_node, context))
             if res.should_return():
@@ -364,7 +377,7 @@ class Interpreter:
             if res.should_return():
                 return res
             result, error = false_node, None
-                
+
         if error:
             return res.failure(error)
         else:

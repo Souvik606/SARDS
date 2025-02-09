@@ -447,7 +447,7 @@ class Parser:
         res.register_advancement()
         self.advance()
 
-        return res.success(SwitchNode(selection, cases, default_case))
+        return res.success(SwitchNode(selection, cases, default_case, False))
 
     def case_statement(self):
         res = ParseResult()

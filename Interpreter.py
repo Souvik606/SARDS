@@ -251,33 +251,39 @@ class Interpreter:
 
     def visit_SwitchNode(self, node, context):
         res = RunTimeResult()
+        elements = []
 
         selection_value = res.register(self.visit(node.selection, context))
         if res.should_return():
             return res
 
+        has_matched = False
+        break_encountered = False
         for condition, expression, return_null in node.cases:
             case_value = res.register(self.visit(condition, context))
             if res.should_return():
                 return res
 
-            print(f'{selection_value = },{ case_value = }')
-            print(f'{type(selection_value) = } {type(case_value) = }')
-            if selection_value == case_value:
-                print("equal value detected")
+            if selection_value.value == case_value.value or has_matched:
+                has_matched = True
                 expr_value = res.register(self.visit(expression, context))
-                if res.should_return():
-                    return res
-                return res.success(Number(0) if return_null else expr_value)
+                if res.should_return() and res.loop_break == False: return res
 
-        if node.default_case is not None:
+                if res.loop_break:
+                    break_encountered = True
+                    break
+                elements.append(expr_value)
+
+        if node.default_case is not None and not break_encountered:
             expression, return_null = node.default_case
             default_value = res.register(self.visit(expression, context))
             if res.should_return():
                 return res
-            return res.success(Number(0) if return_null else default_value)
+            elements.append(default_value)
 
-        return res.success(Number(0))
+        return res.success(
+            Number(0) if node.return_null else List(elements).set_context(context).set_pos(node.pos_start,
+                                                                                           node.pos_end))
 
     def visit_IfNode(self, node, context):
         res = RunTimeResult()

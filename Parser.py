@@ -170,6 +170,18 @@ class Parser:
                 InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '+', '-', '*', '/'"))
         return result
 
+    
+    """
+abc {
+xyz | ghi
+
+}
+    
+    def abc
+    def xyz
+    def ghi
+"""
+
     def multiline(self):
         res = ParseResult()
         statements = []
@@ -388,19 +400,10 @@ class Parser:
 
         return res.success(FunctionCallNode(call_node, arg_nodes))
 
-    """
-    while-expression: Keyword:whenever expression LPAREN2 ((expression|statements) RPAREN2)| NEWLINE multiline RPAREN2)
-    
-    switch-statement: KEYWORD:menu ternary-expression LPAREN2 (case-statement)+ default-statement? RPAREN2
-
-    case-statement: KEYWORD:choice ternary-expression LPAREN2 ((expression|statements) RPAREN2)| NEWLINE multiline RPAREN2)
-
-    default-statement: KEYWORD:fallback LPAREN2 ((expression|statements) RPAREN2)| NEWLINE multiline RPAREN2)
-    """
-
     def switch_statement(self):
         res = ParseResult()
-
+        cases = []
+        defaultcase = None
         if not (self.current_tok.type == T_KEYWORD and self.current_tok.value == 'menu'):
             return res.failure(
                 InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected 'menu'"))
@@ -416,16 +419,33 @@ class Parser:
 
         res.register_advancement()
         self.advance()
-        # (case-statement)+ default-statement?
-
-        #
+        # (case-statement)* default-statement? (case-statement)*
+        found_default = False
+        index_default = -1
+        count = 0
+        
+        while(self.current_tok.type == T_KEYWORD and (self.current_tok.value == 'choice' or self.current_tok.value == 'fallback')):
+            if(self.current_tok.type == T_KEYWORD and self.current_tok.value == 'choice'):
+                case = res.register(self.case_statement())
+                if res.error: return res
+                cases.append(case)
+            else:
+                if found_default == True:
+                    return res.failure(InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Multiple 'fallback' statements found"))
+                found_default = True
+                index_default = count
+                defaultcase = res.register(self.default_statement())
+                if res.error: return res
+            count = count + 1
+            
+            
         if not self.current_tok.type == T_RPAREN2:
             return res.failure(InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '}'"))
 
         res.register_advancement()
         self.advance()
 
-        return res.success(SwitchNode(selection, cases, defaultcase, False))
+        return res.success(SwitchNode(selection, cases, defaultcase, index_default, count, False))
 
     def case_statement(self):
         res = ParseResult()
@@ -960,6 +980,11 @@ class Parser:
             method_expr = res.register(self.function_definition())
             if res.error: return res
             return res.success(method_expr)
+        
+        elif token.type == T_KEYWORD and token.value == 'menu':
+            switch_statement = res.register(self.switch_statement())
+            if res.error: return res
+            return res.success(switch_statement)
 
         elif token.type == T_LPAREN3:
             list_expression = res.register(self.list_expression())

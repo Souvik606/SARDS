@@ -1,10 +1,12 @@
 class SwitchNode:
-    def __init__(self, select, cases, default_case, return_null):
+    def __init__(self, select, cases, default_case, index_def, count, return_null):
         self.select = select
         self.cases = cases
         self.default_case = default_case
-        self.pos_start = self.cases[0][0].pos_start
-        self.pos_end = (self.default_case or self.cases[-1])[0].pos_end
+        self.index_def = index_def
+        self.count = count
+        self.pos_start = self.default_case.pos_start if index_def == 0 else self.cases[0].pos_start 
+        self.pos_end = self.default_case.pos_end if index_def == count-1 else self.cases[-1].pos_end
         self.return_null = return_null
 
 

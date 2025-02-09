@@ -170,18 +170,6 @@ class Parser:
                 InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '+', '-', '*', '/'"))
         return result
 
-    
-    """
-abc {
-xyz | ghi
-
-}
-    
-    def abc
-    def xyz
-    def ghi
-"""
-
     def multiline(self):
         res = ParseResult()
         statements = []
@@ -438,6 +426,9 @@ xyz | ghi
                 if res.error: return res
             count = count + 1
             
+        if count == 0:
+            return res.failure(
+                InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected 'choice' or 'fallback"))
             
         if not self.current_tok.type == T_RPAREN2:
             return res.failure(InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '}'"))
@@ -449,10 +440,6 @@ xyz | ghi
 
     def case_statement(self):
         res = ParseResult()
-
-        if not (self.current_tok.type == T_KEYWORD and self.current_tok.value == 'choice'):
-            return res.failure(
-                InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected 'choice'"))
 
         res.register_advancement()
         self.advance()
@@ -498,10 +485,6 @@ xyz | ghi
 
     def default_statement(self):
         res = ParseResult()
-
-        if not (self.current_tok.type == T_KEYWORD and self.current_tok.value == 'fallback'):
-            return res.failure(
-                InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected 'fallback'"))
 
         res.register_advancement()
         self.advance()

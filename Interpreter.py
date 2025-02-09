@@ -87,7 +87,7 @@ class RunTimeResult:
         self.loop_break = True
         return self
 
-    def switch_break(self):
+    def success_switch_break(self):
         self.reset()
         self.switch_break = True
         return self
@@ -98,7 +98,7 @@ class RunTimeResult:
         return self
 
     def should_return(self):
-        return self.error or self.func_return_value or self.loop_continue or self.loop_break
+        return self.error or self.func_return_value or self.loop_continue or self.loop_break or self.switch_break
 
 
 class Interpreter:
@@ -250,12 +250,23 @@ class Interpreter:
                                                                                            node.pos_end))
 
     def visit_SwitchNode(self, node, context):
-        
+        match_val = res.register(self.visit(node.select, context))
         return
     
     def visit_CaseNode(self, node, context):
-        
-        return
+        res = RunTimeResult()
+
+        condition = res.register(self.visit(node.choice_node, context))
+        if res.should_return(): return res
+        if not condition.is_true(): break
+        value = res.register(self.visit(node.body_node, context))
+        if res.should_return() and res.switch_break == False: return res
+        if res.switch_break: return
+
+
+        return res.success(
+            Number(0) if node.return_null else value.set_context(context).set_pos(node.pos_start,
+                                                                                           node.pos_end))
 
     def visit_IfNode(self, node, context):
         res = RunTimeResult()

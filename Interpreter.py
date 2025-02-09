@@ -252,19 +252,29 @@ class Interpreter:
     def visit_SwitchNode(self, node, context):
         res = RunTimeResult()
 
-        for selection, expression, return_null in node.cases:
-            case_value = res.register(self.visit(selection, context))
-            if res.should_return(): return res
+        selection_value = res.register(self.visit(node.selection, context))
+        if res.should_return():
+            return res
 
-            if case_value.is_true():
-                expression_value = res.register(self.visit(expression, context))
-                if res.should_return(): return res
-                return res.success(Number(0) if return_null else expression_value)
+        for condition, expression, return_null in node.cases:
+            case_value = res.register(self.visit(condition, context))
+            if res.should_return():
+                return res
 
-        if node.default_case:
+            print(f'{selection_value = },{ case_value = }')
+            print(f'{type(selection_value) = } {type(case_value) = }')
+            if selection_value == case_value:
+                print("equal value detected")
+                expr_value = res.register(self.visit(expression, context))
+                if res.should_return():
+                    return res
+                return res.success(Number(0) if return_null else expr_value)
+
+        if node.default_case is not None:
             expression, return_null = node.default_case
             default_value = res.register(self.visit(expression, context))
-            if res.should_return(): return res
+            if res.should_return():
+                return res
             return res.success(Number(0) if return_null else default_value)
 
         return res.success(Number(0))

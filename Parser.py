@@ -389,38 +389,32 @@ class Parser:
 
         return res.success(FunctionCallNode(call_node, arg_nodes))
 
-    """
-    while-expression: Keyword:whenever expression LPAREN2 ((expression|statements) RPAREN2)| NEWLINE multiline RPAREN2)
-    
-    switch-statement: KEYWORD:menu ternary-expression LPAREN2 (case-statement)+ default-statement? RPAREN2
-
-    case-statement: KEYWORD:choice ternary-expression LPAREN2 ((expression|statements) RPAREN2)| NEWLINE multiline RPAREN2)
-
-    default-statement: KEYWORD:fallback LPAREN2 ((expression|statements) RPAREN2)| NEWLINE multiline RPAREN2)
-    
-    menu variable {
-        case{hello}
-    }
-    """
-
     def switch_statement(self):
         res = ParseResult()
         cases = []
 
         if not (self.current_tok.type == T_KEYWORD and self.current_tok.value == 'menu'):
             return res.failure(
-                InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, f"Expected 'menu'"))
-
-        print("menu recognized")
+                InvalidSyntaxError(
+                    self.current_tok.pos_start, self.current_tok.pos_end,
+                    "Expected 'menu'"
+                )
+            )
 
         res.register_advancement()
         self.advance()
+
         selection = res.register(self.ternary_expression())
-        if res.error: return res
+        if res.error:
+            return res
 
-        if not self.current_tok.type == T_LPAREN2:
-            return res.failure(InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '{'"))
-
+        if self.current_tok.type != T_LPAREN2:
+            return res.failure(
+                InvalidSyntaxError(
+                    self.current_tok.pos_start, self.current_tok.pos_end,
+                    "Expected '{'"
+                )
+            )
         res.register_advancement()
         self.advance()
 
@@ -428,22 +422,32 @@ class Parser:
             res.register_advancement()
             self.advance()
 
-        if not self.current_tok.type == T_KEYWORD:
+        if not (self.current_tok.type == T_KEYWORD and self.current_tok.value in ('choice', 'fallback')):
             return res.failure(
-                InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected 'choice'"))
+                InvalidSyntaxError(
+                    self.current_tok.pos_start, self.current_tok.pos_end,
+                    "Expected 'choice' or 'fallback'"
+                )
+            )
 
         all_cases = res.register(self.case_or_default_expression())
-        if res.error: return res
+        if res.error:
+            return res
+
         new_cases, default_case = all_cases
         cases.extend(new_cases)
 
         if self.current_tok.type != T_RPAREN2:
             return res.failure(
-                InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '}'"))
+                InvalidSyntaxError(
+                    self.current_tok.pos_start, self.current_tok.pos_end,
+                    "Expected '}'"
+                )
+            )
         res.register_advancement()
         self.advance()
 
-        return res.success(SwitchNode(cases, default_case))
+        return res.success(SwitchNode(selection, cases, default_case))
 
     def case_statement(self):
         res = ParseResult()
@@ -451,17 +455,26 @@ class Parser:
 
         if not (self.current_tok.type == T_KEYWORD and self.current_tok.value == 'choice'):
             return res.failure(
-                InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, f"Expected 'choice'"))
+                InvalidSyntaxError(
+                    self.current_tok.pos_start, self.current_tok.pos_end,
+                    "Expected 'choice'"
+                )
+            )
 
         res.register_advancement()
         self.advance()
 
         condition = res.register(self.ternary_expression())
-        if res.error: return res
+        if res.error:
+            return res
 
-        if not self.current_tok.type == T_LPAREN2:
-            return res.failure(InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '{'"))
-
+        if self.current_tok.type != T_LPAREN2:
+            return res.failure(
+                InvalidSyntaxError(
+                    self.current_tok.pos_start, self.current_tok.pos_end,
+                    "Expected '{'"
+                )
+            )
         res.register_advancement()
         self.advance()
 
@@ -469,41 +482,45 @@ class Parser:
             res.register_advancement()
             self.advance()
 
-            statements = res.register(self.multiline())
-            if res.error: return res
-            cases.append((condition, statements, True))
+            body = res.register(self.multiline())
+            if res.error:
+                return res
+            cases.append((condition, body, True))
 
             if self.current_tok.type != T_RPAREN2:
                 return res.failure(
-                    InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '}'"))
-
+                    InvalidSyntaxError(
+                        self.current_tok.pos_start, self.current_tok.pos_end,
+                        "Expected '}'"
+                    )
+                )
             res.register_advancement()
             self.advance()
-
-            all_cases = res.register(self.case_or_default_expression())
-            if res.error: return res
-            new_cases, default_case = all_cases
-            cases.extend(new_cases)
 
         else:
             if self.current_tok.type == T_IDENTIFIER and self.peek() and self.peek().type == T_EQ:
-                expression = res.register(self.statements())
+                body = res.register(self.statements())
             else:
-                expression = res.register(self.expression())
-            if res.error: return res
-            cases.append((condition, expression, False))
+                body = res.register(self.expression())
+            if res.error:
+                return res
+            cases.append((condition, body, False))
 
             if self.current_tok.type != T_RPAREN2:
                 return res.failure(
-                    InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '}'"))
-
+                    InvalidSyntaxError(
+                        self.current_tok.pos_start, self.current_tok.pos_end,
+                        "Expected '}'"
+                    )
+                )
             res.register_advancement()
             self.advance()
 
-            all_cases = res.register(self.case_or_default_expression())
-            if res.error: return res
-            new_cases, default_case = all_cases
-            cases.extend(new_cases)
+        all_cases = res.register(self.case_or_default_expression())
+        if res.error:
+            return res
+        new_cases, default_case = all_cases
+        cases.extend(new_cases)
 
         return res.success((cases, default_case))
 
@@ -515,10 +532,13 @@ class Parser:
             res.register_advancement()
             self.advance()
 
-            if not self.current_tok.type == T_LPAREN2:
+            if self.current_tok.type != T_LPAREN2:
                 return res.failure(
-                    InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '{'"))
-
+                    InvalidSyntaxError(
+                        self.current_tok.pos_start, self.current_tok.pos_end,
+                        "Expected '{'"
+                    )
+                )
             res.register_advancement()
             self.advance()
 
@@ -526,46 +546,58 @@ class Parser:
                 res.register_advancement()
                 self.advance()
 
-                statements = res.register(self.multiline())
-                if res.error: return res
-                default_case = (statements, True)
+                body = res.register(self.multiline())
+                if res.error:
+                    return res
+                default_case = (body, True)
 
-                if not self.current_tok.type == T_RPAREN2:
+                if self.current_tok.type != T_RPAREN2:
                     return res.failure(
-                        InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '}'"))
-
+                        InvalidSyntaxError(
+                            self.current_tok.pos_start, self.current_tok.pos_end,
+                            "Expected '}'"
+                        )
+                    )
                 res.register_advancement()
                 self.advance()
 
             else:
                 if self.current_tok.type == T_IDENTIFIER and self.peek() and self.peek().type == T_EQ:
-                    expression = res.register(self.statements())
+                    body = res.register(self.statements())
                 else:
-                    expression = res.register(self.expression())
-                if res.error: return res
+                    body = res.register(self.expression())
+                if res.error:
+                    return res
 
-                if not self.current_tok.type == T_RPAREN2:
+                if self.current_tok.type != T_RPAREN2:
                     return res.failure(
-                        InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '}'"))
-
+                        InvalidSyntaxError(
+                            self.current_tok.pos_start, self.current_tok.pos_end,
+                            "Expected '}'"
+                        )
+                    )
                 res.register_advancement()
                 self.advance()
 
-                default_case = (expression, False)
+                default_case = (body, False)
 
         return res.success(default_case)
 
     def case_or_default_expression(self):
         res = ParseResult()
-        cases, default_case = [], None
+        cases = []
+        default_case = None
 
         if self.current_tok.type == T_KEYWORD and self.current_tok.value == 'choice':
             all_cases = res.register(self.case_statement())
-            if res.error: return res
+            if res.error:
+                return res
             cases, default_case = all_cases
-        else:
+
+        elif self.current_tok.type == T_KEYWORD and self.current_tok.value == 'fallback':
             default_case = res.register(self.default_statement())
-            if res.error: return res
+            if res.error:
+                return res
 
         return res.success((cases, default_case))
 

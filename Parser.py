@@ -755,7 +755,8 @@ class Parser:
             if res.error:
                 return res
             if self.current_tok and not self.current_tok.type == T_COLON:
-                return res.failure(InvalidSyntaxError(self.current_tok.pos_start,self.current_tok.pos_end,"Expected ':' "))
+                return res.failure(
+                    InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected ':' "))
 
             res.register_advancement()
             self.advance()
@@ -763,7 +764,7 @@ class Parser:
             if res.error:
                 return res
 
-        if not(true_node and false_node):return res.success(comp_node)
+        if not (true_node and false_node): return res.success(comp_node)
 
         return res.success(TernaryOperationNode(comp_node, true_node, false_node))
 
@@ -842,7 +843,7 @@ class Parser:
         if res.error:
             return res
 
-        while self.current_tok and self.current_tok.type in (T_MUL, T_DIVIDE):
+        while self.current_tok and self.current_tok.type in (T_MUL, T_DIVIDE, T_FLOOR):
             operator = self.current_tok
             res.register_advancement()
             self.advance()
@@ -922,18 +923,17 @@ class Parser:
             self.advance()
             return res.success(BreakNode(self.current_tok.pos_start.copy(), self.current_tok.pos_start.copy()))
         else:
-            ternary_node=res.register(self.ternary_expression())
-            if res.error:return res
+            ternary_node = res.register(self.ternary_expression())
+            if res.error: return res
             node = res.register(res.success(ternary_node))
             if res.error:
                 return res.failure(InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end,
                                                       "Expected int,float,identifier"))
             return res.success(node)
 
-
     def logical_expression(self):
 
-        res=ParseResult()
+        res = ParseResult()
         left_node = res.register(self.comp_expression())
         if res.error: return res
 

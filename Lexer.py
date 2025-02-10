@@ -97,18 +97,29 @@ class Lexer:
             self.advance()
             token_type = T_EE
 
-        return Token(token_type,pos_start=pos_start,pos_end=self.pos)
-    
+        return Token(token_type, pos_start=pos_start, pos_end=self.pos)
+
+    def make_floor(self):
+        pos_start = self.pos.copy()
+        self.advance()
+        token_type = T_DIVIDE
+
+        if self.current_char == '/':
+            self.advance()
+            token_type = T_FLOOR
+
+        return Token(token_type, pos_start=pos_start, pos_end=self.pos)
+
     def make_mul(self):
         pos_start = self.pos.copy()
         self.advance()
-        token_type=T_MUL
+        token_type = T_MUL
 
         if self.current_char == '*':
             self.advance()
-            token_type=T_EXP
+            token_type = T_EXP
 
-        return Token(token_type,pos_start=pos_start,pos_end=self.pos)
+        return Token(token_type, pos_start=pos_start, pos_end=self.pos)
 
     def make_not_equals(self):
         pos_start = self.pos.copy()
@@ -203,7 +214,7 @@ class Lexer:
             if self.current_char in ' \t':
                 self.advance()
             elif self.current_char in ';':
-                tokens.append(Token(T_NEWLINE,pos_start=self.pos))
+                tokens.append(Token(T_NEWLINE, pos_start=self.pos))
                 self.advance()
             elif self.current_char in DIGITS:
                 tokens.append(self.make_number())
@@ -220,8 +231,7 @@ class Lexer:
             elif self.current_char == '*':
                 tokens.append(self.make_mul())
             elif self.current_char == '/':
-                tokens.append(Token(T_DIVIDE, pos_start=self.pos))
-                self.advance()
+                tokens.append(self.make_floor())
             elif self.current_char == '=':
                 tokens.append(self.make_equals())
             elif self.current_char == '!':
@@ -257,7 +267,7 @@ class Lexer:
                 tokens.append(Token(T_COMMA, pos_start=self.pos))
                 self.advance()
             elif self.current_char == '?':
-                tokens.append(Token(T_QUESTION,pos_start=self.pos))
+                tokens.append(Token(T_QUESTION, pos_start=self.pos))
                 self.advance()
             else:
                 pos_start = self.pos.copy()

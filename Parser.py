@@ -391,7 +391,6 @@ class Parser:
     def switch_statement(self):
         res = ParseResult()
         cases = []
-        defaultcase = None
         if not (self.current_tok.type == T_KEYWORD and self.current_tok.value == 'menu'):
             return res.failure(
                 InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected 'menu'"))
@@ -407,9 +406,12 @@ class Parser:
 
         res.register_advancement()
         self.advance()
-        # (case-statement)* default-statement? (case-statement)*
+
+        while self.current_tok.type == T_NEWLINE:
+            res.register_advancement()
+            self.advance()
+
         found_default = False
-        index_default = -1
         count = 0
         
         while(self.current_tok.type == T_KEYWORD and (self.current_tok.value == 'choice' or self.current_tok.value == 'fallback')):
@@ -417,15 +419,19 @@ class Parser:
                 case = res.register(self.case_statement())
                 if res.error: return res
                 cases.append(case)
+                while self.current_tok.type == T_NEWLINE:
+                    res.register_advancement()
+                    self.advance()
             else:
                 if found_default == True:
                     return res.failure(InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Multiple 'fallback' statements found"))
                 found_default = True
-                #index_default = count
-                #defaultcase = res.register(self.default_statement())
                 case = res.register(self.default_statement())
                 if res.error: return res
                 cases.append(case)
+                while self.current_tok.type == T_NEWLINE:
+                    res.register_advancement()
+                    self.advance()
             count = count + 1
             
         if count == 0:
@@ -438,7 +444,7 @@ class Parser:
         res.register_advancement()
         self.advance()
 
-        return res.success(SwitchNode(selection, cases, False))#defaultcase, index_default, count, False))
+        return res.success(SwitchNode(selection, cases, False))
 
     def case_statement(self):
         res = ParseResult()

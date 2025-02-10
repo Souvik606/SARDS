@@ -123,10 +123,26 @@ class Number:
                     operand.pos_start, operand.pos_end, 'Division by zero', self.context
                 )
             return Number(self.value / operand.value).set_context(self.context), None
-        
-    def exponent(self,operand):
-        if isinstance(operand,Number):
-            return Number(self.value**operand.value).set_context(self.context),None
+
+    def modulus(self, operand):
+        if isinstance(operand, Number):
+            if operand.value == 0:
+                return None, RunTimeError(
+                    operand.pos_start, operand.pos_end, 'Division by zero', self.context
+                )
+            return Number(self.value % operand.value).set_context(self.context), None
+          
+    def floor_divide(self, operand):
+        if isinstance(operand, Number):
+            if operand.value == 0:
+                return None, RunTimeError(
+                    operand.pos_start, operand.pos_end, 'Division by zero', self.context
+                )
+            return Number(self.value // operand.value).set_context(self.context), None
+
+    def exponent(self, operand):
+        if isinstance(operand, Number):
+            return Number(self.value ** operand.value).set_context(self.context), None
 
     def get_comparison_eq(self, operand):
         if isinstance(operand, Number):

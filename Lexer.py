@@ -232,6 +232,11 @@ class Lexer:
                 tokens.append(self.make_mul())
             elif self.current_char == '/':
                 tokens.append(self.make_floor())
+                self.advance()
+            elif self.current_char == '%':
+                tokens.append(Token(T_MODULUS, pos_start=self.pos))
+                self.advance()
+                
             elif self.current_char == '=':
                 tokens.append(self.make_equals())
             elif self.current_char == '!':

@@ -56,13 +56,13 @@ class RunTimeResult:
         self.error = None
         self.func_return_value = None
         self.loop_continue = False
-        self.loop_break = False
+        self.loop_or_switch_break = False
 
     def register(self, res):
         self.error = res.should_return()
         self.func_return_value = res.func_return_value
         self.loop_continue = res.loop_continue
-        self.loop_break = res.loop_break
+        self.loop_or_switch_break = res.loop_or_switch_break
         return res.value
 
     def success(self, value):
@@ -82,7 +82,7 @@ class RunTimeResult:
 
     def success_break(self):
         self.reset()
-        self.loop_break = True
+        self.loop_or_switch_break = True
         return self
 
     def failure(self, error):
@@ -91,7 +91,7 @@ class RunTimeResult:
         return self
 
     def should_return(self):
-        return self.error or self.func_return_value or self.loop_continue or self.loop_break
+        return self.error or self.func_return_value or self.loop_continue or self.loop_or_switch_break
 
 
 class Interpreter:
@@ -192,10 +192,10 @@ class Interpreter:
             if not condition.is_true(): break
 
             value = res.register(self.visit(node.body_node, context))
-            if res.should_return() and res.loop_break == False and res.loop_continue == False: return res
+            if res.should_return() and res.loop_or_switch_break == False and res.loop_continue == False: return res
 
             if res.loop_continue: continue
-            if res.loop_break: break
+            if res.loop_or_switch_break: break
 
             elements.append(value)
 
@@ -231,10 +231,10 @@ class Interpreter:
             i += step_value.value
 
             value = res.register(self.visit(node.body_node, context))
-            if res.should_return() and res.loop_continue == False and res.loop_break == False: return res
+            if res.should_return() and res.loop_continue == False and res.loop_or_switch_break == False: return res
 
             if res.loop_continue: continue
-            if res.loop_break: break
+            if res.loop_or_switch_break: break
 
             elements.append(value)
 
@@ -242,6 +242,39 @@ class Interpreter:
             Number(0) if node.return_null else List(elements).set_context(context).set_pos(node.pos_start,
                                                                                            node.pos_end))
 
+    def visit_SwitchNode(self, node, context):
+        res = RunTimeResult()
+        elements = []
+        match_index = start_index = 0
+        default_index = len(node.cases)
+        match_found = False
+        selection_val = res.register(self.visit(node.select, context))
+        if res.should_return():
+            return res       
+        
+        for choice, _, _ in node.cases:
+            if choice is None:
+                default_index = match_index
+                match_index = match_index + 1
+                continue
+            choice_val = res.register(self.visit(choice, context))
+            if res.should_return():
+                return res
+            if selection_val.value == choice_val.value:
+                match_found = True
+                break
+            match_index = match_index + 1
+        start_index = match_index if match_found else default_index
+
+        for choice, body, return_null in node.cases[start_index:]:
+            body_val = res.register(self.visit(body, context))
+            if res.should_return() and res.loop_or_switch_break == False: return res
+            elements.append(Number(0) if return_null else body_val)
+            if res.loop_or_switch_break: break
+        
+        return res.success(
+            Number(0) if node.return_null else List(elements).set_context(context).set_pos(node.pos_start, node.pos_end))
+    
     def visit_IfNode(self, node, context):
         res = RunTimeResult()
 

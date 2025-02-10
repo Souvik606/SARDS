@@ -324,6 +324,8 @@ class Interpreter:
             result, error = left_node.multiply(right_node)
         elif node.operator.type == T_DIVIDE:
             result, error = left_node.divide(right_node)
+        elif node.operator.type == T_MODULUS:
+            result, error = left_node.modulus(right_node)
         elif node.operator.type == T_EXP:
             result, error = left_node.exponent(right_node)
         elif node.operator.type == T_EE:
@@ -353,7 +355,7 @@ class Interpreter:
         comp_node = res.register(self.visit(node.comp_node, context))
         if res.should_return():
             return res
-        
+
         if comp_node.is_true():
             true_node = res.register(self.visit(node.true_node, context))
             if res.should_return():
@@ -364,7 +366,7 @@ class Interpreter:
             if res.should_return():
                 return res
             result, error = false_node, None
-                
+
         if error:
             return res.failure(error)
         else:

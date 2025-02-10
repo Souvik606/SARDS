@@ -7,8 +7,8 @@ class SwitchNode:
         #self.default_body = default_body
         self.index_def = index_def
         self.count = count
-        self.pos_start = self.default_case.pos_start if index_def == 0 else self.cases.pos_start 
-        self.pos_end = self.default_case.pos_end if index_def == count-1 else self.cases.pos_end
+        self.pos_start = self.default_case[0].pos_start if index_def.value == 0 else self.cases[0][0].pos_start 
+        self.pos_end = self.default_case[0].pos_end if index_def.value == count.value-1 else self.cases[-1][0].pos_end
         self.return_null = return_null
 
 '''

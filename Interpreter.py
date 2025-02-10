@@ -255,7 +255,11 @@ class Interpreter:
         count = 0
         start_index = 0
         selection_val = res.register(self.visit(node.select, context))
+        if res.should_return():
+            return res
         number_cases = res.register(self.visit(node.count, context))
+        if res.should_return():
+            return res
         default_index = res.register(self.visit(node.index_def, context))
         if res.should_return():
             return res

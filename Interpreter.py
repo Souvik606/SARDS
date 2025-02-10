@@ -250,10 +250,73 @@ class Interpreter:
                                                                                            node.pos_end))
 
     def visit_SwitchNode(self, node, context):
-        match_val = res.register(self.visit(node.select, context))
-        return
+        res = RunTimeResult()
+        elements = []
+        count = 0
+        start_index = 0
+        selection_val = res.register(self.visit(node.select, context))
+        number_cases = res.register(self.visit(node.count, context))
+        default_index = res.register(self.visit(node.index_def, context))
+        if res.should_return():
+            return res
+        
+        match_found = False
+        break_found = False
+        for choice, _, _ in node.cases:
+            choice_val = res.register(self.visit(choice, context))
+            if res.should_return():
+                return res
+            if selection_val.value == choice_val.value:
+                match_found = True
+                break
+            count = count + 1
+
+        start_index = count if match_found else default_index.value
+        count = 0
+
+        for choice, body, return_null in node.cases[start_index:]:
+            if (default_index == count) and not break_found:
+                body, return_null = node.default_case
+                default_body = res.register(self.visit(body, context))
+                if res.should_return() and res.loop_break == False: return res
+                if res.loop_break:
+                    break_found = True
+                    break
+                elements.append(default_body) 
+            if not break_found:
+                body_val = res.register(self.visit(body, context))
+                if res.should_return() and res.loop_break == False: return res
+                if res.loop_break:
+                    break_found = True
+                    break
+                elements.append(body_val)
+            start_index = start_index + 1
+            '''
+            choice_val = res.register(self.visit(choice, context))
+            if res.should_return():
+                return res
+            if selection_val.value == choice_val.value or match_found:
+                match_found = True
+                if (default_index == count) and not break_found:
+                    body, return_null = node.default_case
+                    default_body = res.register(self.visit(body, context))
+                    if res.should_return():
+                        return res
+                    elements.append(default_body)    
+                body_val = res.register(self.visit(body, context))
+                if res.should_return() and res.loop_break == False: return res
+                if res.loop_break:
+                    break_found = True
+                    break
+                elements.append(body_val)
+            count = count + 1
+        
+'''
+        return res.success(
+            Number(0) if node.return_null else List(elements).set_context(context).set_pos(node.pos_start,
+                                                                                           node.pos_end))
     
-    def visit_CaseNode(self, node, context):
+    '''def visit_CaseNode(self, node, context):
         res = RunTimeResult()
 
         condition = res.register(self.visit(node.choice_node, context))
@@ -267,7 +330,7 @@ class Interpreter:
         return res.success(
             Number(0) if node.return_null else value.set_context(context).set_pos(node.pos_start,
                                                                                            node.pos_end))
-
+'''
     def visit_IfNode(self, node, context):
         res = RunTimeResult()
 
@@ -333,7 +396,7 @@ class Interpreter:
         return RunTimeResult().success_break()
 
     def visit_SwitchBreakNode(self, node, context):
-        return RunTimeResult().switch_break()
+        return RunTimeResult().success_switch_break()
 
     def visit_BinaryOperationNode(self, node, context):
         res = RunTimeResult()

@@ -14,7 +14,7 @@ comp-expression: KEYWORD:NOT comp-expression | arith-expression ((EE | NEQ | LT 
 
 arith-expression: term ((PLUS | MINUS) term)*
 
-term: unary ((MUL | DIV | MODULUS) unary)*
+term: unary ((MUL | DIV | MODULUS | FLOOR_DIV) unary)*
 
 unary: (PLUS | MINUS) unary | exponent
 

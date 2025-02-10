@@ -22,6 +22,7 @@ T_MINUS = 'MINUS'  # Subtraction operator (-)
 T_MUL = 'MUL'  # Multiplication operator (*)
 T_DIVIDE = 'DIV'  # Division operator (/)
 T_MODULUS = 'MOD'
+T_FLOOR = 'FLOOR'
 T_EXP = 'EXP'  # Exponentiation operator (**)
 T_EQ = 'EQUAL'
 T_NEQ = 'NOTEQUAL'

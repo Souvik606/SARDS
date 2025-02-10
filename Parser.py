@@ -421,9 +421,11 @@ class Parser:
                 if found_default == True:
                     return res.failure(InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Multiple 'fallback' statements found"))
                 found_default = True
-                index_default = count
-                defaultcase = res.register(self.default_statement())
+                #index_default = count
+                #defaultcase = res.register(self.default_statement())
+                case = res.register(self.default_statement())
                 if res.error: return res
+                cases.append(case)
             count = count + 1
             
         if count == 0:
@@ -436,7 +438,7 @@ class Parser:
         res.register_advancement()
         self.advance()
 
-        return res.success(SwitchNode(selection, cases, defaultcase, index_default, count, False))
+        return res.success(SwitchNode(selection, cases, False))#defaultcase, index_default, count, False))
 
     def case_statement(self):
         res = ParseResult()
@@ -508,7 +510,7 @@ class Parser:
 
             body = res.register(self.multiline())
             if res.error: return res
-            default_case = (body, True)
+            default_case = (None, body, True)
             if not self.current_tok.type == T_RPAREN2:
                 return res.failure(
                     InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '}'"))
@@ -523,7 +525,7 @@ class Parser:
             else:
                 body_node = res.register(self.expression())
             if res.error: return res
-            default_case = (body_node, False)
+            default_case = (None, body_node, False)
             if not self.current_tok.type == T_RPAREN2:
                 return res.failure(InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '}'"))
 

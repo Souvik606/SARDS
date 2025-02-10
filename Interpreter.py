@@ -254,19 +254,24 @@ class Interpreter:
         elements = []
         count = 0
         start_index = 0
+        default_index = 0
         selection_val = res.register(self.visit(node.select, context))
         if res.should_return():
             return res
-        number_cases = res.register(self.visit(node.count, context))
+        '''number_cases = res.register(self.visit(node.count, context))
         if res.should_return():
-            return res
-        default_index = res.register(self.visit(node.index_def, context))
+            return res'''
+        '''default_index = res.register(self.visit(node.index_def, context))
         if res.should_return():
-            return res
+            return res'''
         
         match_found = False
         break_found = False
         for choice, _, _ in node.cases:
+            if choice is None:
+                default_index = count
+                count = count + 1
+                continue
             choice_val = res.register(self.visit(choice, context))
             if res.should_return():
                 return res
@@ -275,26 +280,34 @@ class Interpreter:
                 break
             count = count + 1
 
-        start_index = count if match_found else default_index.value
-        count = 0
+        start_index = count if match_found else default_index
+        # count = 0
 
         for choice, body, return_null in node.cases[start_index:]:
-            if (default_index == count) and not break_found:
+            body_val = res.register(self.visit(body, context))
+            if res.should_return() and res.loop_break == False: return res
+            elements.append(body_val)
+            if res.loop_break:
+                break_found = True
+                break
+            '''if break_found:
+                break
+            if (default_index == start_index):
                 body, return_null = node.default_case
                 default_body = res.register(self.visit(body, context))
                 if res.should_return() and res.loop_break == False: return res
+                elements.append(default_body) 
                 if res.loop_break:
                     break_found = True
                     break
-                elements.append(default_body) 
-            if not break_found:
+            else:
                 body_val = res.register(self.visit(body, context))
                 if res.should_return() and res.loop_break == False: return res
+                elements.append(body_val)
                 if res.loop_break:
                     break_found = True
-                    break
-                elements.append(body_val)
-            start_index = start_index + 1
+                    break'''
+            # start_index = start_index + 1
             '''
             choice_val = res.register(self.visit(choice, context))
             if res.should_return():

@@ -245,7 +245,8 @@ class Interpreter:
     def visit_SwitchNode(self, node, context):
         res = RunTimeResult()
         elements = []
-        match_index = start_index = default_index = 0
+        match_index = start_index = 0
+        default_index = len(node.cases)
         match_found = False
         selection_val = res.register(self.visit(node.select, context))
         if res.should_return():
@@ -268,7 +269,7 @@ class Interpreter:
         for choice, body, return_null in node.cases[start_index:]:
             body_val = res.register(self.visit(body, context))
             if res.should_return() and res.loop_or_switch_break == False: return res
-            elements.append(body_val)
+            elements.append(Number(0) if return_null else body_val)
             if res.loop_or_switch_break: break
         
         return res.success(

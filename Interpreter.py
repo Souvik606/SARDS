@@ -357,6 +357,10 @@ class Interpreter:
             result, error = left_node.multiply(right_node)
         elif node.operator.type == T_DIVIDE:
             result, error = left_node.divide(right_node)
+        elif node.operator.type == T_MODULUS:
+            result, error = left_node.modulus(right_node)
+        elif node.operator.type == T_FLOOR:
+            result, error = left_node.floor_divide(right_node)
         elif node.operator.type == T_EXP:
             result, error = left_node.exponent(right_node)
         elif node.operator.type == T_EE:

@@ -995,7 +995,7 @@ class Parser:
         if res.error:
             return res
 
-        while self.current_tok and self.current_tok.type in (T_MUL, T_DIVIDE):
+        while self.current_tok and self.current_tok.type in (T_MUL, T_DIVIDE, T_MODULUS, T_FLOOR):
             operator = self.current_tok
             res.register_advancement()
             self.advance()

@@ -477,8 +477,6 @@ class Parser:
 
             res.register_advancement()
             self.advance()
-
-            # return res.success(CaseNode(choice_val, body, True))
         else:
             if self.current_tok.type == T_IDENTIFIER and self.peek() and self.peek().type == T_EQ:
                 body_node = res.register(self.statements())
@@ -493,7 +491,6 @@ class Parser:
             self.advance()
 
         return res.success(case)
-        # return res.success(CaseNode(choice_val, body_node, False))
 
     def default_statement(self):
         res = ParseResult()
@@ -523,8 +520,6 @@ class Parser:
 
             res.register_advancement()
             self.advance()
-
-            #return res.success(CaseNode(None, body, True))
         else:
             if self.current_tok.type == T_IDENTIFIER and self.peek() and self.peek().type == T_EQ:
                 body_node = res.register(self.statements())
@@ -539,7 +534,6 @@ class Parser:
             self.advance()
 
         return res.success(default_case)
-        # return res.success(CaseNode(None, body_node, False))
 
     def while_expression(self):
         res = ParseResult()

@@ -71,6 +71,9 @@ def run(filename, text):
     # If lexical analysis encounters an error, return it
     if error:
         return None, error
+    
+    # For debugging lexer's output
+    # print(tokens)
 
     # Pass the tokens to the parser
     parser = Parser(tokens)

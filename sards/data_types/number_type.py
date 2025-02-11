@@ -11,7 +11,7 @@ Classes:
 - Number: Represents a number and supports basic arithmetic operations.
 """
 
-from Error_Class import RunTimeError
+from core.error import RunTimeError
 
 
 class Number:

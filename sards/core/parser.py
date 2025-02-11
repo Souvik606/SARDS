@@ -26,17 +26,17 @@ Methods:
   - expression(): Parses full expressions (handles addition and subtraction operations).
 """
 
-from Error_Class import *
-from constants import *
-from for_loop import *
-from if_else_elif_statements import *
-from jump_statements import *
-from list_data_type import ListNode
-from string_data_type import *
-from user_functions import *
-from variablesNode import *
-from while_loop import *
-from switch_statements import *
+from core.error import *
+from core.constants import *
+from ast_nodes.for_node import *
+from ast_nodes.if_node import *
+from ast_nodes.jump_node import *
+from data_types.list_type import ListNode
+from data_types.string_type import *
+from ast_nodes.functions_node import *
+from ast_nodes.variables_node import *
+from ast_nodes.while_node import *
+from ast_nodes.switch_node import *
 
 class ParseResult:
     """Stores the result of a parsing operation, including errors and the parsed node."""

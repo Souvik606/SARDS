@@ -13,8 +13,8 @@ Functions:
 - run: Executes the lexer on a given input and returns tokens or errors.
 """
 
-from Error_Class import *
-from constants import *
+from core.error import *
+from core.constants import *
 
 
 class Token:

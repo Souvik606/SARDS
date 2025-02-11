@@ -10,8 +10,8 @@ Classes:
 - Interpreter: Evaluates AST nodes and executes operations.
 """
 
-from constants import *
-from list_data_type import *
+from core.constants import *
+from data_types.list_type import *
 
 
 class Context:
@@ -149,7 +149,7 @@ class Interpreter:
         )
 
     def visit_FunctionDefinitionNode(self, node, context):
-        from FunctionType import Function
+        from user_functions.function_type import Function
         res = RunTimeResult()
 
         func_name = node.var_name_tok.value if node.var_name_tok else None

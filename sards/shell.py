@@ -22,12 +22,12 @@ as an Abstract Syntax Tree (AST).
    - Displays either the parsed AST or an error message.
 
 """
-from FunctionType import *
-from Lexer import *  # Importing the lexer module for tokenization
-from Parser import *  # Importing the parser module for syntax analysis
-from Interpreter import *
-from variablesNode import *
-from NumberDataType import *
+from user_functions.function_type import *
+from core.lexer import *  # Importing the lexer module for tokenization
+from core.parser import *  # Importing the parser module for syntax analysis
+from core.interpreter import *
+from ast_nodes.variables_node import *
+from data_types.number_type import *
 
 global_symbol_table = SymbolTable()
 global_symbol_table.set("None", Number(0))

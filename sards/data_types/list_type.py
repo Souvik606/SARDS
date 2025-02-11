@@ -1,5 +1,5 @@
-from NumberDataType import *
-from string_data_type import *
+from data_types.number_type import *
+from data_types.string_type import *
 
 class ListNode:
     def __init__(self,element_nodes,pos_start,pos_end):

@@ -1,7 +1,7 @@
-from Interpreter import RunTimeResult
-from list_data_type import List
-from variablesNode import *
-from string_data_type import *
+from core.interpreter import RunTimeResult
+from data_types.list_type import List
+from ast_nodes.variables_node import *
+from data_types.string_type import *
 
 
 class BaseFunction():
@@ -20,7 +20,7 @@ class BaseFunction():
         return self
 
     def generate_new_context(self):
-        from Interpreter import RunTimeResult, Interpreter, Context
+        from core.interpreter import RunTimeResult, Interpreter, Context
 
         new_context = Context(self.name, self.context, self.pos_start)
         new_context.symbol_table = SymbolTable(new_context.parent.symbol_table)
@@ -63,7 +63,7 @@ class Function(BaseFunction):
         self.auto_return = auto_return
 
     def execute(self, args):
-        from Interpreter import RunTimeResult, Interpreter, Context
+        from core.interpreter import RunTimeResult, Interpreter, Context
 
         res = RunTimeResult()
         interpreter = Interpreter()

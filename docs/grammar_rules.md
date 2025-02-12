@@ -60,7 +60,7 @@ function-call: IDENTIFIER LPAREN (expression(COMMA expression)*)? RPAREN
 
 list-expression: LPAREN3 (expression(COMMA expression)*)? RPAREN RPAREN3
 
-while-expression: Keyword:whenever expression LPAREN2 ((expression|statements) RPAREN2)| (NEWLINE multiline RPAREN2)
+while-expression: KEYWORD:whenever expression LPAREN2 ((expression|statements) RPAREN2)| (NEWLINE multiline RPAREN2)
 
 for-expression: KEYWORD:Cycle IDENTIFIER EQUAL expression COLON expression (COLON:expression)?LPAREN2 ((expression|statements)RPAREN2)| (NEWLINE multiline RPAREN2)
 

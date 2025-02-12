@@ -46,7 +46,8 @@ class List:
                 new_list.elements.pop(operand.value)
                 return new_list, None
             except:
-                return None, RuntimeError(operand.pos_start, operand.pos_end, 'Index out of bounds', self.context)
+                return None, RuntimeError(operand.pos_start, operand.pos_end,
+                                          'Index out of bounds', self.context)
 
     def multiply(self, operand):
         if isinstance(operand, Number):

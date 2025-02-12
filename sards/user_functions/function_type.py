@@ -29,14 +29,16 @@ class BaseFunction():
         res = RunTimeResult()
 
         if len(args) > len(arg_names):
-            return res.failure(RunTimeError(self.pos_start, self.pos_end,
-                                            f"{len(args) - len(self.arg_names)} too few args passed into '{self.name}'",
-                                            self.context))
+            return res.failure(
+                RunTimeError(self.pos_start, self.pos_end,
+                    f"{len(args) - len(self.arg_names)} too few args passed into '{self.name}'",
+                    self.context))
 
         if len(args) < len(arg_names):
-            return res.failure(RunTimeError(self.pos_start, self.pos_end,
-                                            f"{len(self.arg_names) - len(args)} too few args passed into '{self.name}'",
-                                            self.context))
+            return res.failure(
+                RunTimeError(self.pos_start, self.pos_end,
+                    f"{len(self.arg_names) - len(args)} too few args passed into '{self.name}'",
+                    self.context))
         return res.success(None)
 
     def populate_args(self, arg_names, args, context):
@@ -74,7 +76,8 @@ class Function(BaseFunction):
         value = res.register(interpreter.visit(self.body_node, exec_context))
         if res.should_return() and res.func_return_value == None: return res
 
-        return_value = (value if self.auto_return else None) or res.func_return_value or Number(0)
+        return_value = ((value if self.auto_return else None) or
+                        res.func_return_value or Number(0))
         return res.success(return_value)
 
     def copy(self):

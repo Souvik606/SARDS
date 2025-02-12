@@ -1,7 +1,8 @@
 """
 number_operations.py
 
-This module defines a `Number` class that represents numerical values with additional functionalities such as:
+This module defines a `Number` class that represents numerical values with additional
+functionalities such as:
 - Basic arithmetic operations (addition, subtraction, multiplication, division).
 - Error handling for division by zero.
 - Position tracking for error handling and debugging.
@@ -170,11 +171,13 @@ class Number:
 
     def and_by(self, operand):
         if isinstance(operand, Number):
-            return Number(int(self.value != 0 and operand.value != 0)).set_context(self.context), None
+            return (Number(int(self.value != 0 and operand.value != 0)).set_context(self.context),
+                    None)
 
     def or_by(self, operand):
         if isinstance(operand, Number):
-            return Number(int(self.value != 0 or operand.value != 0)).set_context(self.context), None
+            return (Number(int(self.value != 0 or operand.value != 0)).set_context(self.context),
+                    None)
 
     def not_by(self):
         return Number(int(not self.value)).set_context(self.context), None

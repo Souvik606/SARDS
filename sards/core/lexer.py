@@ -14,7 +14,7 @@ Functions:
 """
 
 from .constants import *
-from .error import *
+from .error import Position, IllegalCharError, ExpectedCharError
 
 
 class Token:

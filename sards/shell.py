@@ -1,5 +1,5 @@
 """
-Module: main
+Module: shell
 
 This module serves as the entry point for executing the lexer and parser.
 It provides an interactive Read-Eval-Print Loop (REPL) where users can input
@@ -23,10 +23,7 @@ as an Abstract Syntax Tree (AST).
 
 """
 
-from sards.ast_nodes import *
-from sards.core import *
-from sards.data_types import *
-from sards.user_functions import *
+from sards import * # pylint: disable=W0401,W0614
 
 global_symbol_table = SymbolTable()
 global_symbol_table.set("None", Number(0))
@@ -40,7 +37,7 @@ global_symbol_table.set("String", BuiltInFunction.String)
 global_symbol_table.set("type", BuiltInFunction.type)
 
 
-def run(filename, text):
+def run(filename, input_text):
     """
     Executes the lexer and parser on the given input expression.
 
@@ -65,7 +62,7 @@ def run(filename, text):
     else:
         print(ast)
     """
-    lexer = Lexer(filename, text)  # Initialize the Lexer with the input text
+    lexer = Lexer(filename, input_text)  # Initialize the Lexer with the input text
     tokens, error = lexer.enumerate_tokens()  # Generate tokens
 
     # If lexical analysis encounters an error, return it
@@ -84,14 +81,14 @@ def run(filename, text):
         return None, syntax_tree.error
 
     # For debugging parser's output
-    # print(syntax_tree.node) 
+    # print(syntax_tree.node)
 
     interpreter = Interpreter()
     context = Context('<program>')
     context.symbol_table = global_symbol_table
-    result = interpreter.visit(syntax_tree.node, context)
+    res = interpreter.visit(syntax_tree.node, context)
 
-    return result.value, result.error
+    return res.value, res.error
 
 
 # REPL (Read-Eval-Print Loop) for continuous user interaction

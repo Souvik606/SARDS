@@ -10,11 +10,11 @@ Classes:
 - Interpreter: Evaluates AST nodes and executes operations.
 """
 
-from sards.data_types import *
-from .parser import *
+from sards.data_types import Number, String, List
+from .constants import *
 
 
-class Context:
+class Context: # pylint: disable=R0903
     """
     Represents the execution context of a program.
 

@@ -1,11 +1,12 @@
-from data_types.number_type import *
-from data_types.string_type import *
+from .number_type import Number
+from .string_type import String
+
 
 class ListNode:
-    def __init__(self,element_nodes,pos_start,pos_end):
-        self.element_nodes=element_nodes
-        self.pos_start=pos_start
-        self.pos_end=pos_end
+    def __init__(self, element_nodes, pos_start, pos_end):
+        self.element_nodes = element_nodes
+        self.pos_start = pos_start
+        self.pos_end = pos_end
 
     def __repr__(self):
         return f'[{", ".join([str(x) for x in self.element_nodes])}]'
@@ -26,33 +27,32 @@ class List:
         self.context = context
         return self
 
-    def add(self,operand):
-        if isinstance(operand,Number) or isinstance(operand,String) :
-            new_list=self.copy()
+    def add(self, operand):
+        if isinstance(operand, Number) or isinstance(operand, String):
+            new_list = self.copy()
             new_list.elements.append(operand)
-            return new_list,None
+            return new_list, None
 
-        elif isinstance(operand,List):
-            new_list=self.copy()
+        elif isinstance(operand, List):
+            new_list = self.copy()
             for i in operand.elements:
                 new_list.elements.append(i)
-            return new_list,None
+            return new_list, None
 
-    def subtract(self,operand):
-        if isinstance(operand,Number):
-            new_list=self.copy()
+    def subtract(self, operand):
+        if isinstance(operand, Number):
+            new_list = self.copy()
             try:
                 new_list.elements.pop(operand.value)
-                return new_list,None
+                return new_list, None
             except:
-                return None,RunTimeError(operand.pos_start,operand.pos_end,'Index out of bounds',self.context)
+                return None, RuntimeError(operand.pos_start, operand.pos_end, 'Index out of bounds', self.context)
 
-
-    def multiply(self,operand):
-        if isinstance(operand,Number):
-            new_list=self.copy()
-            new_list.elements=new_list.elements*operand.value
-            return new_list,None
+    def multiply(self, operand):
+        if isinstance(operand, Number):
+            new_list = self.copy()
+            new_list.elements = new_list.elements * operand.value
+            return new_list, None
 
     def is_true(self):
         return len(self.elements) > 0

@@ -22,23 +22,23 @@ as an Abstract Syntax Tree (AST).
    - Displays either the parsed AST or an error message.
 
 """
-from user_functions.function_type import *
-from core.lexer import *  # Importing the lexer module for tokenization
-from core.parser import *  # Importing the parser module for syntax analysis
-from core.interpreter import *
-from ast_nodes.variables_node import *
-from data_types.number_type import *
+
+from sards.ast_nodes import *
+from sards.core import *
+from sards.data_types import *
+from sards.user_functions import *
 
 global_symbol_table = SymbolTable()
 global_symbol_table.set("None", Number(0))
-global_symbol_table.set("True",Number(1))
-global_symbol_table.set("False",Number(0))
+global_symbol_table.set("True", Number(1))
+global_symbol_table.set("False", Number(0))
 
-global_symbol_table.set("show",BuiltInFunction.show)
-global_symbol_table.set("listen",BuiltInFunction.listen)
-global_symbol_table.set("Integer",BuiltInFunction.Integer)
-global_symbol_table.set("String",BuiltInFunction.String)
-global_symbol_table.set("type",BuiltInFunction.type)
+global_symbol_table.set("show", BuiltInFunction.show)
+global_symbol_table.set("listen", BuiltInFunction.listen)
+global_symbol_table.set("Integer", BuiltInFunction.Integer)
+global_symbol_table.set("String", BuiltInFunction.String)
+global_symbol_table.set("type", BuiltInFunction.type)
+
 
 def run(filename, text):
     """
@@ -66,18 +66,18 @@ def run(filename, text):
         print(ast)
     """
     lexer = Lexer(filename, text)  # Initialize the Lexer with the input text
-    tokens, error = lexer.enumerate_tokens()# Generate tokens
+    tokens, error = lexer.enumerate_tokens()  # Generate tokens
 
     # If lexical analysis encounters an error, return it
     if error:
         return None, error
-    
+
     # For debugging lexer's output
     # print(tokens)
 
     # Pass the tokens to the parser
     parser = Parser(tokens)
-    syntax_tree = parser.parse() # Generate AST
+    syntax_tree = parser.parse()  # Generate AST
 
     # Return the parsed AST and any errors encountered
     if syntax_tree.error:

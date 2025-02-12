@@ -11,7 +11,7 @@ Classes:
 - Number: Represents a number and supports basic arithmetic operations.
 """
 
-from core.error import RunTimeError
+from sards.core import RunTimeError
 
 
 class Number:
@@ -131,7 +131,7 @@ class Number:
                     operand.pos_start, operand.pos_end, 'Division by zero', self.context
                 )
             return Number(self.value % operand.value).set_context(self.context), None
-          
+
     def floor_divide(self, operand):
         if isinstance(operand, Number):
             if operand.value == 0:

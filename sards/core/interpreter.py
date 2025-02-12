@@ -10,8 +10,8 @@ Classes:
 - Interpreter: Evaluates AST nodes and executes operations.
 """
 
-from core.constants import *
-from data_types.list_type import *
+from sards.data_types import *
+from .parser import *
 
 
 class Context:
@@ -149,7 +149,7 @@ class Interpreter:
         )
 
     def visit_FunctionDefinitionNode(self, node, context):
-        from user_functions.function_type import Function
+        from sards.user_functions import Function
         res = RunTimeResult()
 
         func_name = node.var_name_tok.value if node.var_name_tok else None
@@ -250,8 +250,8 @@ class Interpreter:
         match_found = False
         selection_val = res.register(self.visit(node.select, context))
         if res.should_return():
-            return res       
-        
+            return res
+
         for choice, _, _ in node.cases:
             if choice is None:
                 default_index = match_index
@@ -271,10 +271,11 @@ class Interpreter:
             if res.should_return() and res.loop_or_switch_break == False: return res
             elements.append(Number(0) if return_null else body_val)
             if res.loop_or_switch_break: break
-        
+
         return res.success(
-            Number(0) if node.return_null else List(elements).set_context(context).set_pos(node.pos_start, node.pos_end))
-    
+            Number(0) if node.return_null else List(elements).set_context(context).set_pos(node.pos_start,
+                                                                                           node.pos_end))
+
     def visit_IfNode(self, node, context):
         res = RunTimeResult()
 

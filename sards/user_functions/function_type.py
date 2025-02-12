@@ -1,7 +1,6 @@
-from core.interpreter import RunTimeResult
-from data_types.list_type import List
-from ast_nodes.variables_node import *
-from data_types.string_type import *
+from sards.ast_nodes import *
+from sards.core import *
+from sards.data_types import *
 
 
 class BaseFunction():
@@ -20,7 +19,7 @@ class BaseFunction():
         return self
 
     def generate_new_context(self):
-        from core.interpreter import RunTimeResult, Interpreter, Context
+        from sards.core import Context
 
         new_context = Context(self.name, self.context, self.pos_start)
         new_context.symbol_table = SymbolTable(new_context.parent.symbol_table)
@@ -63,7 +62,7 @@ class Function(BaseFunction):
         self.auto_return = auto_return
 
     def execute(self, args):
-        from core.interpreter import RunTimeResult, Interpreter, Context
+        from sards.core import RunTimeResult, Interpreter
 
         res = RunTimeResult()
         interpreter = Interpreter()
@@ -73,9 +72,9 @@ class Function(BaseFunction):
         if res.should_return(): return res
 
         value = res.register(interpreter.visit(self.body_node, exec_context))
-        if res.should_return() and res.func_return_value==None: return res
+        if res.should_return() and res.func_return_value == None: return res
 
-        return_value=(value if self.auto_return else None) or res.func_return_value or Number(0)
+        return_value = (value if self.auto_return else None) or res.func_return_value or Number(0)
         return res.success(return_value)
 
     def copy(self):

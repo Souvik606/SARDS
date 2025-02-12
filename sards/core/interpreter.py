@@ -11,8 +11,8 @@ Classes:
 """
 
 from sards.data_types import Number, String, List
-from .constants import *
-
+from .constants import (T_PLUS, T_MINUS, T_MUL, T_DIVIDE, T_MODULUS, T_FLOOR, T_EXP, T_EE,
+                        T_NEQ, T_GT, T_GTE, T_LT, T_LTE, T_KEYWORD)
 
 class Context: # pylint: disable=R0903
     """
@@ -91,7 +91,10 @@ class RunTimeResult:
         return self
 
     def should_return(self):
-        return self.error or self.func_return_value or self.loop_continue or self.loop_or_switch_break
+        return (self.error or
+                self.func_return_value or
+                self.loop_continue or
+                self.loop_or_switch_break)
 
 
 class Interpreter:
@@ -131,7 +134,7 @@ class Interpreter:
         Raises:
         - Exception: Indicates that the node type is unsupported.
         """
-        raise Exception(f'No visit_{type(node).__name__} method defined')
+        raise NotImplementedError(f'No visit_{type(node).__name__} method defined')
 
     def visit_ListNode(self, node, context):
         res = RunTimeResult()
@@ -139,9 +142,12 @@ class Interpreter:
 
         for element_node in node.element_nodes:
             elements.append(res.register(self.visit(element_node, context)))
-            if res.should_return(): return res
+            if res.should_return():
+                return res
 
-        return res.success(List(elements).set_context(context).set_pos(node.pos_start, node.pos_end))
+        return (res.success(List(elements)
+                            .set_context(context)
+                            .set_pos(node.pos_start, node.pos_end)))
 
     def visit_StringNode(self, node, context):
         return RunTimeResult().success(
@@ -155,9 +161,9 @@ class Interpreter:
         func_name = node.var_name_tok.value if node.var_name_tok else None
         body_node = node.body_node
         arg_names = [arg_name.value for arg_name in node.arg_name_toks]
-        func_value = Function(func_name, body_node, arg_names, node.auto_return).set_context(context).set_pos(
-            node.pos_start,
-            node.pos_end)
+        func_value = (Function(func_name, body_node, arg_names, node.auto_return)
+                      .set_context(context)
+                      .set_pos(node.pos_start, node.pos_end))
 
         if node.var_name_tok:
             context.symbol_table.set(func_name, func_value)
@@ -169,16 +175,21 @@ class Interpreter:
         args = []
 
         call_value = res.register(self.visit(node.call_node, context))
-        if res.should_return(): return res
+        if res.should_return():
+            return res
         call_value = call_value.copy().set_pos(node.pos_start, node.pos_end)
 
         for arg_node in node.arg_nodes:
             args.append(res.register(self.visit(arg_node, context)))
-            if res.should_return(): return res
+            if res.should_return():
+                return res
 
         return_value = res.register(call_value.execute(args))
-        if res.should_return(): return res
-        return_value = return_value.copy().set_pos(node.pos_start, node.pos_end).set_context(context)
+        if res.should_return():
+            return res
+        return_value = (return_value.copy()
+                        .set_pos(node.pos_start, node.pos_end)
+                        .set_context(context))
 
         return res.success(return_value)
 
@@ -188,34 +199,44 @@ class Interpreter:
 
         while True:
             condition = res.register(self.visit(node.condition_node, context))
-            if res.should_return(): return res
-            if not condition.is_true(): break
+            if res.should_return():
+                return res
+            if not condition.is_true():
+                break
 
             value = res.register(self.visit(node.body_node, context))
-            if res.should_return() and res.loop_or_switch_break == False and res.loop_continue == False: return res
+            if (res.should_return() and
+                not res.loop_or_switch_break and
+                not res.loop_continue):
+                return res
 
-            if res.loop_continue: continue
-            if res.loop_or_switch_break: break
+            if res.loop_continue:
+                continue
+            if res.loop_or_switch_break:
+                break
 
             elements.append(value)
 
         return res.success(
-            Number(0) if node.return_null else List(elements).set_context(context).set_pos(node.pos_start,
-                                                                                           node.pos_end))
+            Number(0) if node.return_null else (List(elements).set_context(context)
+                                                .set_pos(node.pos_start, node.pos_end)))
 
     def visit_ForNode(self, node, context):
         res = RunTimeResult()
         elements = []
 
         start_value = res.register(self.visit(node.start_value_node, context))
-        if res.should_return(): return res
+        if res.should_return():
+            return res
 
         end_value = res.register(self.visit(node.end_value_node, context))
-        if res.should_return(): return res
+        if res.should_return():
+            return res
 
         if node.step_value_node:
             step_value = res.register(self.visit(node.step_value_node, context))
-            if res.should_return(): return res
+            if res.should_return():
+                return res
         else:
             step_value = Number(1)
 
@@ -231,16 +252,23 @@ class Interpreter:
             i += step_value.value
 
             value = res.register(self.visit(node.body_node, context))
-            if res.should_return() and res.loop_continue == False and res.loop_or_switch_break == False: return res
+            if (res.should_return() and
+                not res.loop_continue and
+                not res.loop_or_switch_break):
+                return res
 
-            if res.loop_continue: continue
-            if res.loop_or_switch_break: break
+            if res.loop_continue:
+                continue
+            if res.loop_or_switch_break:
+                break
 
             elements.append(value)
 
         return res.success(
-            Number(0) if node.return_null else List(elements).set_context(context).set_pos(node.pos_start,
-                                                                                           node.pos_end))
+            Number(0) if node.return_null else (List(elements)
+                                                .set_context(context)
+                                                .set_pos(node.pos_start,
+                                                                                           node.pos_end)))
 
     def visit_SwitchNode(self, node, context):
         res = RunTimeResult()
@@ -268,30 +296,38 @@ class Interpreter:
 
         for choice, body, return_null in node.cases[start_index:]:
             body_val = res.register(self.visit(body, context))
-            if res.should_return() and res.loop_or_switch_break == False: return res
+            if (res.should_return() and
+                not res.loop_or_switch_break):
+                return res
             elements.append(Number(0) if return_null else body_val)
-            if res.loop_or_switch_break: break
+            if res.loop_or_switch_break:
+                break
 
         return res.success(
-            Number(0) if node.return_null else List(elements).set_context(context).set_pos(node.pos_start,
-                                                                                           node.pos_end))
+            Number(0) if node.return_null else (List(elements)
+                                                .set_context(context)
+                                                .set_pos(node.pos_start,
+                                                                                           node.pos_end)))
 
     def visit_IfNode(self, node, context):
         res = RunTimeResult()
 
         for condition, expression, return_null in node.cases:
             condition_value = res.register(self.visit(condition, context))
-            if res.should_return(): return res
+            if res.should_return():
+                return res
 
             if condition_value.is_true():
                 expression_value = res.register(self.visit(expression, context))
-                if res.should_return(): return res
+                if res.should_return():
+                    return res
                 return res.success(Number(0) if return_null else expression_value)
 
         if node.else_case:
             expression, return_null = node.else_case
             else_value = res.register(self.visit(expression, context))
-            if res.should_return(): return res
+            if res.should_return():
+                return res
             return res.success(Number(0) if return_null else else_value)
 
         return res.success(Number(0))
@@ -302,7 +338,11 @@ class Interpreter:
         value = context.symbol_table.get(var_name)
 
         if value is None:
-            return res.failure(RuntimeError(node.pos_start, node.pos_end, f"'{var_name}' is not defined", context))
+            return (res.failure(
+                RuntimeError(node.pos_start,
+                             node.pos_end,
+                             f"'{var_name}' is not defined",
+                             context)))
 
         value = value.copy().set_pos(node.pos_start, node.pos_end).set_context(context)
         return res.success(value)
@@ -328,7 +368,8 @@ class Interpreter:
 
         if node.node_to_return:
             value = res.register(self.visit(node.node_to_return, context))
-            if res.should_return(): return res
+            if res.should_return():
+                return res
         else:
             value = Number(0)
 
@@ -383,8 +424,7 @@ class Interpreter:
 
         if error:
             return res.failure(error)
-        else:
-            return res.success(result.set_pos(node.pos_start, node.pos_end))
+        return res.success(result.set_pos(node.pos_start, node.pos_end))
 
     def visit_TernaryOperationNode(self, node, context):
         res = RunTimeResult()

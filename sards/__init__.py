@@ -2,7 +2,7 @@
 This module initializes the SARDS package.
 """
 
-from . import core  # Import the module itself
+from . import core
 from . import ast_nodes
 from . import data_types
 from . import user_functions

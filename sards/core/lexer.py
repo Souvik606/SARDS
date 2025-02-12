@@ -23,7 +23,8 @@ class Token:
 
     Attributes:
     - type (str): The type of the token (e.g., INT, FLOAT, PLUS).
-    - value (any, optional): The value of the token (e.g., a number for INT/FLOAT, or None for operators).
+    - value (any, optional): The value of the token (e.g., a number for INT/FLOAT,
+        or None for operators).
     - pos_start (Position, optional): The starting position of the token.
     - pos_end (Position, optional): The ending position of the token.
     """
@@ -197,8 +198,8 @@ class Lexer:
                 number += self.current_char
             self.advance()
 
-        return Token(T_FLOAT, float(number), pos_start, self.pos) if is_float else Token(T_INT, int(number), pos_start,
-                                                                                         self.pos)
+        return (Token(T_FLOAT, float(number), pos_start, self.pos) if is_float
+                else Token(T_INT, int(number), pos_start, self.pos))
 
     def enumerate_tokens(self):
         """
@@ -239,7 +240,8 @@ class Lexer:
                 tokens.append(self.make_equals())
             elif self.current_char == '!':
                 tok, error = self.make_not_equals()
-                if error: return [], error
+                if error:
+                    return [], error
                 tokens.append(tok)
             elif self.current_char == '>':
                 tokens.append(self.make_greater())

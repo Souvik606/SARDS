@@ -127,7 +127,8 @@ class IllegalCharError(Error): # pylint: disable=too-few-public-methods
         Parameters:
         - pos_start (Position): The starting position of the illegal character.
         - pos_end (Position): The ending position of the illegal character.
-        - details (str, optional): Additional information about the error. Defaults to an empty string.
+        - details (str, optional): Additional information about the error. Defaults
+            to an empty string.
         """
         super().__init__(pos_start, pos_end, 'Illegal Character', details)
 

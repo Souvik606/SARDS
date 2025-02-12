@@ -174,6 +174,7 @@ class Parser: # pylint: disable=R0904
     def multiline(self):
         """
         Grammar Rule:
+
         NEWLINE* (expression|statements|jump_statements)
         (NEWLINE* (expression|statements|jump_statements))* NEWLINE*
         """
@@ -225,6 +226,7 @@ class Parser: # pylint: disable=R0904
     def list_expression(self):
         """
         Grammar Rule:
+
         LPAREN3 (expression(COMMA expression)*)? RPAREN RPAREN3
         """
         res = ParseResult()
@@ -270,6 +272,7 @@ class Parser: # pylint: disable=R0904
     def function_definition(self):
         """
         Grammar Rule:
+
         KEYWORD:method IDENTIFIER?LPAREN (IDENTIFIER (COMMA IDENTIFIER)*)? RPAREN
         LPAREN2 ((expression|statements)RPAREN2)| (NEWLINE multiline RPAREN2)
         """
@@ -389,6 +392,7 @@ class Parser: # pylint: disable=R0904
     def function_call(self):
         """
         Grammar Rule:
+
         IDENTIFIER LPAREN (expression(COMMA expression)*)? RPAREN
         """
         res = ParseResult()
@@ -446,6 +450,7 @@ class Parser: # pylint: disable=R0904
     def switch_statement(self):
         """
         Grammar Rule:
+
         KEYWORD:menu ternary-expression LPAREN2 NEWLINE* (case-statement* NEWLINE*)*
         default-statement? NEWLINE* (case_statement* NEWLINE*)* RPAREN2
         """
@@ -522,6 +527,7 @@ class Parser: # pylint: disable=R0904
     def case_statement(self):
         """
         Grammar Rule:
+
         KEYWORD:choice ternary-expression LPAREN2 ((expression|statements) RPAREN2)|
         (NEWLINE multiline RPAREN2)
         """
@@ -586,6 +592,7 @@ class Parser: # pylint: disable=R0904
     def default_statement(self):
         """
         Grammar Rule:
+
         KEYWORD:fallback LPAREN2 ((expression|statements) RPAREN2)| (NEWLINE multiline RPAREN2)
         """
         res = ParseResult()
@@ -645,6 +652,7 @@ class Parser: # pylint: disable=R0904
     def while_expression(self):
         """
         Grammar Rule:
+
         KEYWORD:whenever expression LPAREN2 ((expression|statements) RPAREN2)|
         (NEWLINE multiline RPAREN2)
         """
@@ -710,6 +718,7 @@ class Parser: # pylint: disable=R0904
     def for_expression(self):
         """
         Grammar Rule:
+
         KEYWORD:Cycle IDENTIFIER EQUAL expression COLON expression (COLON:expression)?
         LPAREN2 ((expression|statements)RPAREN2)| (NEWLINE multiline RPAREN2)
         """
@@ -814,6 +823,7 @@ class Parser: # pylint: disable=R0904
     def if_expression(self):
         """
         Grammar Rule:
+
         KEYWORD:when expression LPAREN2 ((expression|statements) RPAREN2
         (elif-expression|else-expression)?) | (NEWLINE multiline RPAREN2
         (elif-expression|else-expression))
@@ -915,6 +925,7 @@ class Parser: # pylint: disable=R0904
     def elif_expression(self):
         """
         Grammar Rule:
+
         KEYWORD:orwhen expression LPAREN2 ((expression|statements) RPAREN2
         (elif-expression|else-expression)?) | (NEWLINE multiline RPAREN2
         (elif-expression|else-expression))
@@ -997,6 +1008,7 @@ class Parser: # pylint: disable=R0904
     def else_expression(self):
         """
         Grammar Rule:
+
         KEYWORD:otherwise LPAREN2 (((expression|statements)RPAREN2)|NEWLINE multiline RPAREN2)
         """
         res = ParseResult()
@@ -1058,6 +1070,7 @@ class Parser: # pylint: disable=R0904
     def unary(self):
         """
         Grammar Rule:
+
         (PLUS | MINUS) unary | exponent
         """
         res = ParseResult()
@@ -1076,6 +1089,7 @@ class Parser: # pylint: disable=R0904
     def exponent(self):
         """
         Grammar Rule:
+
         factor (EXP unary)*
         """
         res = ParseResult()
@@ -1102,6 +1116,7 @@ class Parser: # pylint: disable=R0904
     def ternary_expression(self):
         """
         Grammar Rule:
+
         (logical-expression|statements) (QUESTION ternary-expression COLON ternary-expression)*
         """
         res = ParseResult()
@@ -1141,6 +1156,7 @@ class Parser: # pylint: disable=R0904
         Parses factors (numbers, parentheses, and unary operations).
 
         Grammar Rule:
+
         INT | FLOAT | STRING | IDENTIFIER | LPAREN expression RPAREN |
         if-expression | for-expression | while-expression |
         function-definition | function-call | list-expression | switch-statement
@@ -1230,6 +1246,7 @@ class Parser: # pylint: disable=R0904
         """Parses terms, handling multiplication and division operations.
         
         Grammar Rule:
+
         unary ((MUL | DIV | MODULUS | FLOOR_DIV) unary)*
         """
         res = ParseResult()
@@ -1252,6 +1269,7 @@ class Parser: # pylint: disable=R0904
     def statements(self):
         """
         Grammar Rule:
+
         (KEYWORD:define)? IDENTIFIER EQUAL expression
         """
         res = ParseResult()
@@ -1312,6 +1330,7 @@ class Parser: # pylint: disable=R0904
     def expression(self):
         """
         Grammar Rule:
+
         jump_statements | ternary-expression
         """
         res = ParseResult()
@@ -1353,6 +1372,7 @@ class Parser: # pylint: disable=R0904
     def logical_expression(self):
         """
         Grammar Rule:
+
         comp-expression ((KEYWORD:AND | KEYWORD:OR) comp-expression)*
         """
         res = ParseResult()
@@ -1384,6 +1404,7 @@ class Parser: # pylint: disable=R0904
     def comp_expression(self):
         """
         Grammar Rule:
+
         KEYWORD:NOT comp-expression | arith-expression
         ((EE | NEQ | LT | GT | LTE | GTE) arith-expression)*
         """
@@ -1424,6 +1445,7 @@ class Parser: # pylint: disable=R0904
         """Parses full expressions, handling addition and subtraction operations.
         
         Grammar Rule:
+
         term ((PLUS | MINUS) term)*
         """
         res = ParseResult()

@@ -12,7 +12,7 @@ Classes:
 - Number: Represents a number and supports basic arithmetic operations.
 """
 
-from sards.core import RunTimeError
+from sards.core.error import RunTimeError
 
 
 class Number:
@@ -107,6 +107,10 @@ class Number:
         if isinstance(operand, Number):
             return Number(self.value * operand.value).set_context(self.context), None
 
+    def _get_runtime_error():
+        from sards.core import RunTimeError
+        return RunTimeError
+    
     def divide(self, operand):
         """
         Divides the current Number instance by another Number instance.

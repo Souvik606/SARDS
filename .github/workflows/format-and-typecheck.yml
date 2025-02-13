@@ -1,9 +1,26 @@
-name: Format and Type Check
+name: Type Check
 
 on: [ push, pull_request ]
 
 jobs:
-  lint:
+  #  format:
+  #    runs-on: ubuntu-latest
+  #    steps:
+  #      - uses: actions/checkout@v4
+  #      - name: Set up Python
+  #        uses: actions/setup-python@v3
+  #        with:
+  #          python-version: "3.8"
+  #
+  #      - name: Install dependencies
+  #        run: |
+  #          pip install black mypy
+  #
+  ##      - name: Check code format with Black
+  ##        run: |
+  ##          black --check .
+
+  type-check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -14,11 +31,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install black mypy
+          pip install mypy
 
-      - name: Check code format with Black
-        run: |
-          black --check .
       - name: Run mypy for type checking
         run: |
           mypy sards

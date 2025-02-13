@@ -38,21 +38,11 @@ execution and parsing, and a modern **Web Frontend** to enhance your development
 
 ## 📋 Table of Contents
 
-- [SARDS: A Custom Language Made with Python](#sards-a-custom-language-made-with-python)
-  - [](#)
-  - [🚀 Features](#-features)
-  - [📋 Table of Contents](#-table-of-contents)
   - [✅ Prerequisites](#-prerequisites)
   - [⚙️ Setup](#️-setup)
   - [🛠️ Environment Variables](#️-environment-variables)
   - [🌐 API Endpoints](#-api-endpoints)
-    - [Code Execution](#code-execution)
-      - [**POST** `/api/execute`](#post-apiexecute)
-      - [**POST** `/api/parse`](#post-apiparse)
   - [📌 Usage](#-usage)
-    - [Running the Interactive Shell](#running-the-interactive-shell)
-    - [Running a SARDS Program from File](#running-a-sards-program-from-file)
-    - [Using the API](#using-the-api)
   - [🛠️ Technologies Used](#️-technologies-used)
   - [📜 License](#-license)
   - [🤝 Contributing](#-contributing)

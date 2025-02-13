@@ -5,6 +5,11 @@
   "private": true,
   "readme": "REAME.md",
   "license": "MIT",
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "engineStrict": true,
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",

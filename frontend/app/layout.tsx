@@ -13,7 +13,7 @@ const inconsolata = localFont({
   src: "../fonts/Inconsolata.ttf",
   display: "swap",
   style: "normal",
-  preload: tru,
+  preload: true,
 });
 
 export const metadata: Metadata = {

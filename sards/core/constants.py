@@ -45,6 +45,5 @@ T_QUESTION = 'QUESTION'
 
 # Keywords list
 
-KEYWORDS = ['define', 'and', 'or', 'not', 'when', 'orwhen', 'otherwise', 'Cycle', 'whenever', 'method', 'yield',
-            'escape', 'proceed', 'menu', 'choice', 'fallback']
-
+KEYWORDS = ['define', 'and', 'or', 'not', 'when', 'orwhen', 'otherwise', 'Cycle', 'whenever',
+            'method', 'yield', 'escape', 'proceed', 'menu', 'choice', 'fallback']

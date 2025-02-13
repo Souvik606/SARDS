@@ -1,5 +1,5 @@
 """
-Module: main
+Module: shell
 
 This module serves as the entry point for executing the lexer and parser.
 It provides an interactive Read-Eval-Print Loop (REPL) where users can input
@@ -22,25 +22,22 @@ as an Abstract Syntax Tree (AST).
    - Displays either the parsed AST or an error message.
 
 """
-from FunctionType import *
-from Lexer import *  # Importing the lexer module for tokenization
-from Parser import *  # Importing the parser module for syntax analysis
-from Interpreter import *
-from variablesNode import *
-from NumberDataType import *
+
+from sards import * # pylint: disable=W0401,W0614
 
 global_symbol_table = SymbolTable()
 global_symbol_table.set("None", Number(0))
-global_symbol_table.set("True",Number(1))
-global_symbol_table.set("False",Number(0))
+global_symbol_table.set("True", Number(1))
+global_symbol_table.set("False", Number(0))
 
-global_symbol_table.set("show",BuiltInFunction.show)
-global_symbol_table.set("listen",BuiltInFunction.listen)
-global_symbol_table.set("Integer",BuiltInFunction.Integer)
-global_symbol_table.set("String",BuiltInFunction.String)
-global_symbol_table.set("type",BuiltInFunction.type)
+global_symbol_table.set("show", BuiltInFunction.show)
+global_symbol_table.set("listen", BuiltInFunction.listen)
+global_symbol_table.set("Integer", BuiltInFunction.Integer)
+global_symbol_table.set("String", BuiltInFunction.String)
+global_symbol_table.set("type", BuiltInFunction.type)
 
-def run(filename, text):
+
+def run(filename, input_text):
     """
     Executes the lexer and parser on the given input expression.
 
@@ -65,33 +62,33 @@ def run(filename, text):
     else:
         print(ast)
     """
-    lexer = Lexer(filename, text)  # Initialize the Lexer with the input text
-    tokens, error = lexer.enumerate_tokens()# Generate tokens
+    lexer = Lexer(filename, input_text)  # Initialize the Lexer with the input text
+    tokens, error = lexer.enumerate_tokens()  # Generate tokens
 
     # If lexical analysis encounters an error, return it
     if error:
         return None, error
-    
+
     # For debugging lexer's output
     # print(tokens)
 
     # Pass the tokens to the parser
     parser = Parser(tokens)
-    syntax_tree = parser.parse() # Generate AST
+    syntax_tree = parser.parse()  # Generate AST
 
     # Return the parsed AST and any errors encountered
     if syntax_tree.error:
         return None, syntax_tree.error
 
     # For debugging parser's output
-    # print(syntax_tree.node) 
+    # print(syntax_tree.node)
 
     interpreter = Interpreter()
     context = Context('<program>')
     context.symbol_table = global_symbol_table
-    result = interpreter.visit(syntax_tree.node, context)
+    res = interpreter.visit(syntax_tree.node, context)
 
-    return result.value, result.error
+    return res.value, res.error
 
 
 # REPL (Read-Eval-Print Loop) for continuous user interaction

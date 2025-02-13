@@ -1,4 +1,5 @@
-from NumberDataType import *
+from .number_type import *
+
 
 class StringNode:
     def __init__(self, token):

@@ -72,7 +72,7 @@ class Position:
         return Position(self.index, self.line, self.col, self.file_name, self.file_text)
 
 
-class Error:
+class Error: # pylint: disable=too-few-public-methods
     """
     Represents a general error encountered during tokenization or parsing.
 
@@ -106,10 +106,13 @@ class Error:
         - str: A formatted error message containing the error name, details,
                and file location information.
         """
-        return f'{self.error_name}: {self.details}\nFile {self.pos_start.file_name}, line {self.pos_start.line + 1}'
+        return (
+            f"{self.error_name}: {self.details}\n"
+            f"File {self.pos_start.file_name}, line {self.pos_start.line + 1}"
+        )
 
 
-class IllegalCharError(Error):
+class IllegalCharError(Error): # pylint: disable=too-few-public-methods
     """
     Handles errors caused by illegal characters in the input text.
 
@@ -124,15 +127,23 @@ class IllegalCharError(Error):
         Parameters:
         - pos_start (Position): The starting position of the illegal character.
         - pos_end (Position): The ending position of the illegal character.
-        - details (str, optional): Additional information about the error. Defaults to an empty string.
+        - details (str, optional): Additional information about the error. Defaults
+            to an empty string.
         """
         super().__init__(pos_start, pos_end, 'Illegal Character', details)
 
-class ExpectedCharError(Error):
+class ExpectedCharError(Error): # pylint: disable=too-few-public-methods
+    """
+    Handles errors caused by absence of expected characters in the input text.
+
+    Inherits from:
+    - Error
+    """
+
     def __init__(self,pos_start,pos_end,details):
         super().__init__(pos_start,pos_end,'Expected Character',details)
 
-class InvalidSyntaxError(Error):
+class InvalidSyntaxError(Error): # pylint: disable=too-few-public-methods
     """
     Handles errors caused by invalid syntax in the input text.
 
@@ -147,7 +158,8 @@ class InvalidSyntaxError(Error):
         Parameters:
         - pos_start (Position): The starting position of the syntax error.
         - pos_end (Position): The ending position of the syntax error.
-        - details (str, optional): Additional information about the error. Defaults to an empty string.
+        - details (str, optional): Additional information about the error.
+                                    Defaults to an empty string.
         """
         super().__init__(pos_start, pos_end, 'Invalid Syntax', details)
 
@@ -198,9 +210,11 @@ class RunTimeError(Error):
 
         while context:
             result = (
-                f'{self.error_name}: {self.details}\n'
-                f'File {position.file_name}, line {str(position.line + 1)}, in {context.display_name}\n'
+                f"{self.error_name}: {self.details}\n"
+                f"File {position.file_name}, line {position.line + 1}, "
+                f"in {context.display_name}\n"
             )
+
             position = context.parent_entry_pos
             context = context.parent
 

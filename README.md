@@ -194,4 +194,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ## 🤝 Contributing
 
 Contributions are welcome! Please read
-our [Contributing Guidelines](https://github.com/Souvik^06/SARDS/blob/master/CONTRIBUTING.md) to get started.
+our [Contributing Guidelines](CONTRIBUTING.md) to get started.

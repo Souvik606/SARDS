@@ -1,13 +1,13 @@
 <div align="center">
-  <img src="media/logo.png" alt="SARDS Logo" style="padding:10px" width="200">
+  <img src="media/sards-logo.png" alt="SARDS Logo" style="padding:10px" width="200">
   <br>
-  <a href="https://github.com/Souvik^06/SARDS/releases">
+  <a href="https://github.com/Souvik606/SARDS/releases">
     <img src="https://img.shields.io/badge/0.0.4-teal?label=version" alt="Version">
   </a>
-  <a href="https://github.com/Souvik^06/SARDS/issues">
+  <a href="https://github.com/Souvik606/SARDS/issues">
     <img src="https://img.shields.io/github/issues/Souvik606/SARDS" alt="Issues">
   </a>
-  <a href="https://github.com/Souvik^06/SARDS">
+  <a href="https://github.com/Souvik606/SARDS">
     <img src="https://img.shields.io/github/stars/Souvik606/SARDS" alt="GitHub Stars">
   </a>
 </div>
@@ -25,7 +25,7 @@ execution and parsing, and a modern **Web Frontend** to enhance your development
 
 [//]: # ([![Builds]&#40;https://github.com/Souvik^06/SARDS/actions/workflows/builds.yml/badge.svg&#41;]&#40;https://github.com/Souvik^06/SARDS/actions/workflows/builds.yml&#41;)
 [![Pylint](https://github.com/Souvik606/SARDS/actions/workflows/pylint.yml/badge.svg)](https://github.com/Souvik606/SARDS/actions/workflows/pylint.yml)
-
+[![Type Check](https://github.com/Souvik606/SARDS/actions/workflows/format-and-typecheck.yml/badge.svg)](https://github.com/Souvik606/SARDS/actions/workflows/format-and-typecheck.yml)
 ---
 
 ## 🚀 Features

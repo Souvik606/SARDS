@@ -5,6 +5,8 @@
   "useTabs": false,
   "semi": true,
   "endOfLine": "crlf",
+  "arrowParens": "always",
+  "trailingComma": "es5",
   "plugins": [
     "prettier-plugin-tailwindcss"
   ]

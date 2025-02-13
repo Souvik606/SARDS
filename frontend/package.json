@@ -1,9 +1,12 @@
 {
   "name": "frontend",
+  "description": "Editor and docs for the SARDS language.",
   "version": "0.1.0",
   "private": true,
+  "readme": "REAME.md",
+  "license": "MIT",
+  "packageManager": ">=pnpm@9.0.0",
   "scripts": {
-    "predev": "prettier --write .",
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",

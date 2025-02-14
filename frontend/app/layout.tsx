@@ -1,18 +1,19 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Poppins } from "next/font/google";
+import { Fira_Code, Poppins } from "next/font/google";
 import "../styles/globals.css";
 
-// Refined serif for headings
-const cormorantGaramond = Cormorant_Garamond({
+const firaCode = Fira_Code({
   subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--cormorant-garamond",
+  display: "swap",
+  variable: "--fira-code",
 });
 
-// Modern sans‑serif for body text
 const poppins = Poppins({
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  preload: true,
+  style: "normal",
+  display: "swap",
   variable: "--poppins",
 });
 
@@ -22,15 +23,15 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-                                     children,
-                                   }: {
+  children,
+}: {
   children: React.ReactNode;
 }) {
   return (
-      <html lang="en" className={`${cormorantGaramond.variable} scroll-smooth`}>
+    <html lang="en" className={`${firaCode.variable} scroll-smooth`}>
       <body className={`${poppins.className} relative antialiased`}>
-      {children}
+        {children}
       </body>
-      </html>
+    </html>
   );
 }

@@ -29,7 +29,7 @@ const StarOnGithubBtn = () => {
     <Link
       target="_blank"
       rel="noopener noreferrer"
-      className="group hover:fill-primary button border-muted-light text-primary-text bg-background-100 relative order-2 mt-1 flex h-14 w-full max-w-sm transform items-center justify-center gap-2 overflow-hidden rounded-md border px-4 py-2 font-mono text-sm font-medium whitespace-nowrap ring-offset-2 ring-offset-zinc-900 transition-all duration-300 hover:ring-2 sm:text-base"
+      className="group peer hover:fill-primary button border-muted-light text-primary-text bg-background-100 relative order-2 mt-1 flex h-14 w-full max-w-sm transform items-center justify-center gap-2 overflow-hidden rounded-md border px-4 py-2 font-mono text-sm font-medium whitespace-nowrap ring-offset-2 ring-offset-zinc-900 transition-all duration-300 hover:ring-2 sm:text-base"
       href="https://github.com/Souvik606/SARDS"
     >
       <svg

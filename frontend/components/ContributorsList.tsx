@@ -2,6 +2,7 @@
 
 import React, { FC, useEffect, useState } from "react";
 import Link from "next/link";
+import { Ellipsis } from "lucide-react";
 
 interface Contributor {
   id: number;
@@ -51,7 +52,7 @@ const ContributorsList: FC<ContributorsListProps> = ({ owner, repo }) => {
             <img
               src={contributor.avatar_url}
               alt={contributor.login}
-              className="border-background-500 peer size-10 rounded-full border-3 object-cover drop-shadow-md hover:border-4"
+              className="border-background-400 peer size-10 rounded-full border-3 object-cover drop-shadow-md hover:border-4"
             />
             <p className="absolute bottom-full mt-1 hidden w-max text-sm peer-hover:block">
               {contributor.login}
@@ -59,6 +60,16 @@ const ContributorsList: FC<ContributorsListProps> = ({ owner, repo }) => {
           </div>
         </Link>
       ))}
+      <Link
+        href={`https://github.com/${owner}/${repo}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="relative -ml-6 transition-all hover:z-50 hover:scale-110"
+      >
+        <div className="border-background-400 flex size-10 items-center justify-center rounded-full border-3 bg-zinc-800 text-zinc-600 drop-shadow-md hover:border-4">
+          <Ellipsis className="text-secondary-text" />
+        </div>
+      </Link>
     </div>
   );
 };

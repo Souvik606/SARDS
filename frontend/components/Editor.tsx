@@ -122,43 +122,44 @@ const CodeEditor: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-neutral-900">
-      <div className="bg-gray-850 wrapper w-3/4 overflow-hidden rounded-lg border border-zinc-700 shadow-lg">
-        <div className="flex h-12 items-center justify-between border-b border-zinc-700 bg-zinc-800 px-4">
-          <div className="text-lg font-semibold text-white">Playground</div>
-          <div className="flex space-x-4">
-            <button className="flex cursor-pointer items-center gap-2 rounded-full border border-teal-400 px-8 py-1 font-medium text-teal-400 transition-all hover:bg-teal-400 hover:text-zinc-800">
-              <Play className="inline size-3" fill="currentColor" />
-              <span>Run</span>
-            </button>
-            <button className="border-danger-700 hover:bg-danger-700 text-danger-700 flex cursor-pointer items-center gap-2 rounded-full border px-8 py-1 font-medium transition-all hover:text-zinc-800">
-              <Trash className="inline size-3" fill="currentColor" />
-              <span>Clear</span>
-            </button>
-          </div>
+    <div className="bg-gray-850 wrapper w-3/4 overflow-hidden rounded-lg border border-zinc-700 shadow-lg transition-all focus-within:w-full">
+      <div className="flex h-12 items-center justify-between border-b border-zinc-700 bg-zinc-800 px-4">
+        <div className="text-lg font-semibold text-white">Playground</div>
+        <div className="flex space-x-4">
+          <button className="flex cursor-pointer items-center gap-2 rounded-full border border-teal-400 px-8 py-1 font-medium text-teal-400 transition-all hover:bg-teal-400 hover:text-zinc-800">
+            <Play className="inline size-3" fill="currentColor" />
+            <span>Run</span>
+          </button>
+          <button className="border-danger-700 hover:bg-danger-700 text-danger-700 flex cursor-pointer items-center gap-2 rounded-full border px-8 py-1 font-medium transition-all hover:text-zinc-800">
+            <Trash className="inline size-3" fill="currentColor" />
+            <span>Clear</span>
+          </button>
+        </div>
+      </div>
+
+      <div className="flex">
+        <div className="bg-zinc-800 p-4 pr-2 text-right font-mono text-sm text-gray-400 select-none">
+          {lineNumbers.map((lineNumber) => (
+            <div key={lineNumber}>{lineNumber}</div>
+          ))}
         </div>
 
-        <div className="flex">
-          <div className="bg-zinc-800 p-4 pr-2 text-right font-mono text-sm text-gray-400 select-none">
-            {lineNumbers.map((lineNumber) => (
-              <div key={lineNumber}>{lineNumber}</div>
-            ))}
-          </div>
-
-          <div className="relative w-full bg-zinc-900">
-            <pre
-              className="pointer-events-none absolute inset-0 h-full w-full overflow-hidden bg-transparent p-4 font-mono text-sm text-white"
-              ref={codeRef}
-            />
-            <textarea
-              className="relative z-10 h-96 w-full resize-none border-none bg-transparent p-4 font-mono text-sm text-transparent caret-white focus:outline-none"
-              placeholder="// Start coding your .sards file here..."
-              value={code}
-              onChange={handleInputChange}
-              onKeyDown={handleKeyDown}
-              spellCheck={false}
-            />
-          </div>
+        <div className="relative w-1/2 bg-zinc-900">
+          <pre
+            className="pointer-events-none absolute inset-0 h-full w-full overflow-hidden bg-transparent p-4 font-mono text-sm text-white"
+            ref={codeRef}
+          />
+          <textarea
+            className="relative z-10 h-96 w-full resize-none border-none bg-transparent p-4 font-mono text-sm text-transparent caret-white focus:outline-none"
+            placeholder="// Start coding your .sards file here..."
+            value={code}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+            spellCheck={false}
+          />
+        </div>
+        <div className="font-code grow bg-slate-950/20 p-2">
+          <span className="pr-2 font-medium text-yellow-100">$</span>Output here
         </div>
       </div>
     </div>

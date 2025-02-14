@@ -126,18 +126,18 @@ const CodeEditor: React.FC = () => {
       <div className="flex h-12 items-center justify-between border-b border-zinc-700 bg-zinc-800 px-4">
         <div className="text-lg font-semibold text-white">Playground</div>
         <div className="flex space-x-4">
-          <button className="flex cursor-pointer items-center gap-2 rounded-full border border-teal-400 px-8 py-1 font-medium text-teal-400 transition-all hover:bg-teal-400 hover:text-zinc-800">
+          <button className="flex cursor-pointer items-center gap-2 rounded-full border border-teal-400 px-2 py-2 font-medium text-teal-400 transition-all hover:bg-teal-400 hover:text-zinc-800 md:px-8 md:py-1">
             <Play className="inline size-3" fill="currentColor" />
-            <span>Run</span>
+            <span className="hidden md:inline">Run</span>
           </button>
-          <button className="border-danger-700 hover:bg-danger-700 text-danger-700 flex cursor-pointer items-center gap-2 rounded-full border px-8 py-1 font-medium transition-all hover:text-zinc-800">
+          <button className="border-danger-700 hover:bg-danger-700 text-danger-700 flex cursor-pointer items-center gap-2 rounded-full border px-2 py-2 font-medium transition-all hover:text-zinc-800 md:px-8 md:py-1">
             <Trash className="inline size-3" fill="currentColor" />
-            <span>Clear</span>
+            <span className="hidden md:inline">Clear</span>
           </button>
         </div>
       </div>
 
-      <div className="flex">
+      <div className="flex flex-wrap">
         <div className="bg-zinc-800 p-4 pr-2 text-right font-mono text-sm text-gray-400 select-none">
           {lineNumbers.map((lineNumber) => (
             <div key={lineNumber}>{lineNumber}</div>
@@ -156,6 +156,7 @@ const CodeEditor: React.FC = () => {
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             spellCheck={false}
+            wrap="wrap"
           />
         </div>
         <div className="font-code grow bg-slate-950/20 p-2">

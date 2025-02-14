@@ -10,19 +10,19 @@ const StarOnGithubBtn = () => {
     const getRepoStars = async () => {
       try {
         const res = await fetch(
-          `https://api.github.com/repos/Souvik606/SARDS/stars`
+          `https://api.github.com/repos/Souvik606/SARDS`,
+          { cache: "no-cache" }
         );
         if (!res.ok) {
           throw new Error(`Error fetching contributors: ${res.statusText}`);
         }
         const data = await res.json();
-        setStars(data);
+        setStars(data.stargazers_count);
       } catch (error) {
         console.error("Failed to fetch contributors:", error);
       }
-
-      getRepoStars();
     };
+    getRepoStars();
   }, []);
 
   return (

@@ -49,12 +49,8 @@ export default function Home() {
                 <Link className="hover:text-primary-text" href="/docs">
                   Docs
                 </Link>
-                <Link
-                  className="cursor text-zinc-700"
-                  data-state="closed"
-                  href="/editor"
-                >
-                  Editor
+                <Link className="hover:text-primary-text" href="/editor">
+                  Playground
                 </Link>
               </div>
             </div>

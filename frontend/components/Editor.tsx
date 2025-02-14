@@ -115,11 +115,11 @@ const CodeEditor: React.FC = () => {
         <div className="flex h-12 items-center justify-between border-b border-zinc-700 bg-zinc-800 px-4">
           <div className="text-lg font-semibold text-white">Playground</div>
           <div className="flex space-x-4">
-            <button className="flex cursor-pointer items-center gap-2 rounded-full border border-teal-400 px-8 py-1 font-bold text-zinc-100 transition-all hover:bg-teal-400 hover:text-zinc-800">
+            <button className="flex cursor-pointer items-center gap-2 rounded-full border border-teal-400 px-8 py-1 font-medium text-teal-400 transition-all hover:bg-teal-400 hover:text-zinc-800">
               <Play className="inline size-3" fill="currentColor" />
               <span>Run</span>
             </button>
-            <button className="border-danger-700 hover:bg-danger-700 flex cursor-pointer items-center gap-2 rounded-full border px-8 py-1 font-bold text-zinc-100 transition-all hover:text-zinc-800">
+            <button className="border-danger-700 hover:bg-danger-700 text-danger-700 flex cursor-pointer items-center gap-2 rounded-full border px-8 py-1 font-medium transition-all hover:text-zinc-800">
               <Trash className="inline size-3" fill="currentColor" />
               <span>Clear</span>
             </button>

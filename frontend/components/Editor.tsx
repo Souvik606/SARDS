@@ -1,9 +1,8 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { Play, Trash } from "lucide-react";
-import hljs from "highlight.js/lib/core";
-import "highlight.js/styles/atom-one-dark.min.css"; // Theme
 import "@/utils/syntax-highlight";
+import hljs from "highlight.js/lib/core";
 
 const CodeEditor: React.FC = () => {
   const [code, setCode] = useState<string>("");

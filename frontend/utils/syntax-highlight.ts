@@ -1,6 +1,6 @@
 import hljs from "highlight.js/lib/core";
 
-hljs.registerLanguage("sards", (hljs) => {
+hljs.registerLanguage("sards", function (hljs) {
   return {
     name: "sards",
     keywords: {
@@ -8,32 +8,46 @@ hljs.registerLanguage("sards", (hljs) => {
         "define and or not when orwhen otherwise Cycle whenever method yield escape proceed menu choice fallback",
     },
     contains: [
-      // Numbers (integer and floating point)
+      // Comments (assuming // is for single-line comments)
+      { className: "comment", begin: /\/\/.*/ },
+
+      // Strings (both single and double quotes)
+      { className: "string", begin: /"(?:\\.|[^"\\])*"/ },
+      { className: "string", begin: /'(?:\\.|[^'\\])*'/ },
+
+      // Numbers (integers and floats)
       { className: "number", begin: /\b\d+(\.\d+)?\b/ },
-      // Strings: support both double and single quotes
+
+      // Keywords (highlighting control structures)
       {
-        className: "string",
-        variants: [
-          { begin: /"/, end: /"/ },
-          { begin: /'/, end: /'/ },
-        ],
+        className: "keyword",
+        begin:
+          /\b(define|and|or|not|when|orwhen|otherwise|Cycle|whenever|method|yield|escape|proceed|menu|choice|fallback)\b/,
       },
-      // Comments: support single-line (//) and multi-line (/* */) comments
+
+      // Function definitions and calls
       {
-        className: "comment",
-        variants: [
-          { begin: /\/\//, end: /$/ },
-          { begin: /\/\*/, end: /\*\// },
-        ],
+        className: "function",
+        begin: /\b[a-zA-Z_]\w*(?=\s*\()/, // Matches function names like show(...)
       },
-      // Function names: match identifiers followed by an opening parenthesis (allowing whitespace)
-      { className: "function", begin: /\b[a-zA-Z_]\w*(?=\s*\()/ },
-      // Operators: include arithmetic, assignment, and comparison operators
-      { className: "operator", begin: /[+\-*/=<>!%]+/ },
-      // Punctuation: common brackets, braces, commas, semicolons, and periods
-      { className: "punctuation", begin: /[{}[\];(),.:]/ },
-      // Variables: simple identifier pattern
-      { className: "variable", begin: /\b[a-zA-Z_]\w*\b/ },
+
+      // Identifiers (variables)
+      {
+        className: "variable",
+        begin: /\b[a-zA-Z_]\w*\b/,
+      },
+
+      // Operators (=, +, -, *, /, etc.)
+      {
+        className: "operator",
+        begin: /=|\+|-|\*|\/|%|==|!=|<=|>=|<|>/,
+      },
+
+      // Punctuation and brackets
+      {
+        className: "punctuation",
+        begin: /[{}[\];(),.:]/,
+      },
     ],
   };
 });

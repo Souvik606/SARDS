@@ -110,9 +110,9 @@ const CodeEditor: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-900">
-      <div className="bg-gray-850 wrapper w-3/4 overflow-hidden rounded-lg border border-gray-700 shadow-lg">
-        <div className="flex h-12 items-center justify-between border-b border-gray-700 bg-gray-800 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-neutral-900">
+      <div className="bg-gray-850 wrapper w-3/4 overflow-hidden rounded-lg border border-zinc-700 shadow-lg">
+        <div className="flex h-12 items-center justify-between border-b border-zinc-700 bg-zinc-800 px-4">
           <div className="text-lg font-semibold text-white">Playground</div>
           <div className="flex space-x-4">
             <button className="flex cursor-pointer items-center gap-2 rounded-full border border-teal-400 px-8 py-1 font-bold text-zinc-100 transition-all hover:bg-teal-400 hover:text-zinc-800">
@@ -127,14 +127,14 @@ const CodeEditor: React.FC = () => {
         </div>
 
         <div className="flex">
-          <div className="bg-gray-800 p-4 pr-2 text-right font-mono text-sm text-gray-400 select-none">
+          <div className="bg-zinc-800 p-4 pr-2 text-right font-mono text-sm text-gray-400 select-none">
             {lineNumbers.map((lineNumber) => (
               <div key={lineNumber}>{lineNumber}</div>
             ))}
           </div>
 
           <textarea
-            className="bg-gray-850 h-96 flex-1 resize-none border-none p-4 font-mono text-sm text-white focus:outline-none"
+            className="h-96 flex-1 resize-none border-none bg-zinc-900 p-4 font-mono text-sm text-white focus:outline-none"
             placeholder="// Start coding your .sards file here..."
             value={code}
             onChange={handleInputChange}

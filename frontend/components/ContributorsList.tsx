@@ -51,7 +51,7 @@ const ContributorsList: FC<ContributorsListProps> = ({ owner, repo }) => {
             <img
               src={contributor.avatar_url}
               alt={contributor.login}
-              className="border-background-800 peer size-10 rounded-full border-2 object-cover hover:border-4"
+              className="border-background-500 peer size-10 rounded-full border-3 object-cover drop-shadow-md hover:border-4"
             />
             <p className="absolute bottom-full mt-1 hidden w-max text-sm peer-hover:block">
               {contributor.login}

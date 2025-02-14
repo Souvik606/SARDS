@@ -45,14 +45,17 @@ const ContributorsList: FC<ContributorsListProps> = ({ owner, repo }) => {
           href={contributor.html_url}
           target="_blank"
           rel="noopener noreferrer"
+          className="relative -ml-6 transition-all hover:z-50 hover:scale-110"
         >
           <div className="flex flex-col items-center">
             <img
               src={contributor.avatar_url}
               alt={contributor.login}
-              className="size-12 rounded-full object-cover"
+              className="border-background-800 peer size-10 rounded-full border-2 object-cover hover:border-4"
             />
-            <p className="mt-1 text-sm">{contributor.login}</p>
+            <p className="absolute bottom-full mt-1 hidden w-max text-sm peer-hover:block">
+              {contributor.login}
+            </p>
           </div>
         </Link>
       ))}

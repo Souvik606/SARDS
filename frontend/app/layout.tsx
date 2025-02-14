@@ -27,10 +27,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${firaCode.variable} ${inconsolata.className} relative antialiased`}
-      >
+    <html lang="en" className={`${firaCode.variable} scroll-smooth`}>
+      <body className={`${inconsolata.className} relative antialiased`}>
         {children}
       </body>
     </html>

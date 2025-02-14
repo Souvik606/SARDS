@@ -40,9 +40,9 @@ export default function Home() {
                   Docs
                 </Link>
                 <Link
-                  className="cursor-not-allowed text-zinc-700"
+                  className="cursor text-zinc-700"
                   data-state="closed"
-                  href="#"
+                  href="/editor"
                 >
                   Editor
                 </Link>

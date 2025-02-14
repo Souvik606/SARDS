@@ -170,3 +170,44 @@ body {
   color: var(--text-primary);
   background: var(--background-100);
 }
+
+/* Keywords */
+.hljs-keyword {
+  color: #ff79c6;
+}
+
+/* Strings */
+.hljs-string {
+  color: #f1fa8c;
+}
+
+/* Numbers */
+.hljs-number {
+  color: #bd93f9;
+}
+
+/* Comments */
+.hljs-comment {
+  color: #6272a4;
+  font-style: italic;
+}
+
+/* Functions */
+.hljs-function {
+  color: #50fafa;
+}
+
+/* Operators */
+.hljs-operator {
+  color: #ffff;
+}
+
+/* Braces & punctuation */
+.hljs-punctuation {
+  color: #d88bff;
+}
+
+/* Variables */
+.hljs-variable {
+  color: #f8f8f2;
+}

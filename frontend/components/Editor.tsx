@@ -1,10 +1,23 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Play, Trash } from "lucide-react";
+import hljs from "highlight.js/lib/core";
+import "highlight.js/styles/atom-one-dark.min.css"; // Theme
+import "@/utils/syntax-highlight";
 
 const CodeEditor: React.FC = () => {
   const [code, setCode] = useState<string>("");
+  const codeRef = useRef<HTMLPreElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const lineNumbers = code.split("\n").map((_, index) => index + 1);
+
+  useEffect(() => {
+    if (codeRef.current) {
+      codeRef.current.innerHTML = hljs.highlight(code, {
+        language: "sards",
+      }).value;
+    }
+  }, [code]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setCode(e.target.value);
@@ -110,7 +123,7 @@ const CodeEditor: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-neutral-900">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-neutral-900">
       <div className="bg-gray-850 wrapper w-3/4 overflow-hidden rounded-lg border border-zinc-700 shadow-lg">
         <div className="flex h-12 items-center justify-between border-b border-zinc-700 bg-zinc-800 px-4">
           <div className="text-lg font-semibold text-white">Playground</div>
@@ -133,13 +146,19 @@ const CodeEditor: React.FC = () => {
             ))}
           </div>
 
-          <textarea
-            className="h-96 flex-1 resize-none border-none bg-zinc-900 p-4 font-mono text-sm text-white focus:outline-none"
-            placeholder="// Start coding your .sards file here..."
-            value={code}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-          />
+          <div className="relative w-full">
+            <pre
+              className="pointer-events-none absolute inset-0 h-full w-full overflow-hidden bg-transparent p-4 font-mono text-sm text-white"
+              ref={codeRef}
+            />
+            <textarea
+              className="relative z-10 h-96 w-full resize-none border-none bg-transparent p-4 font-mono text-sm text-transparent caret-white focus:outline-none"
+              placeholder="// Start coding your .sards file here..."
+              value={code}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+            />
+          </div>
         </div>
       </div>
     </div>

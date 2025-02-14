@@ -116,8 +116,8 @@ export default function Home() {
           <h1 className="font-display text-primary-text inline-flex flex-col gap-1 text-center text-4xl leading-none font-semibold tracking-tight transition sm:text-5xl md:text-6xl lg:text-[4rem]">
             <span>
               Program with{" "}
-              <span className="text-primary-800 relative whitespace-nowrap">
-                <span className="bg-primary-600/10 absolute -top-[2.5%] -left-[2.5%] z-0 h-[105%] w-[105%] -rotate-1"></span>{" "}
+              <span className="text-primary-600 relative mt-2 inline-block whitespace-nowrap md:mt-0 md:inline">
+                <span className="bg-accent-700/20 absolute -left-[8%] z-0 h-full w-[110%] -rotate-3"></span>{" "}
                 SARDS
                 <span className="hidden sm:inline-block">⚡</span>
               </span>{" "}
@@ -194,9 +194,9 @@ export default function Home() {
       </section>
       <section className="dark:bg-background-200/50 flex w-full flex-col items-center gap-8 border-y-2 border-dashed border-gray-700/50 bg-slate-100 px-4 py-28 sm:px-0">
         <h1 className="font-display relative z-10 gap-1 text-center text-4xl font-semibold tracking-tight text-pretty transition sm:text-5xl">
-          <span className="relative mx-3 whitespace-nowrap text-white">
-            <span className="bg-secondary-600/10 absolute -top-[2.5%] -left-[5%] z-0 h-[110%] w-[110%] -rotate-1"></span>
-            <span className="text-primary-800 relative z-10">People</span>
+          <span className="text-primary-600 relative mt-2 inline-block whitespace-nowrap md:mt-0 md:inline">
+            <span className="bg-accent-700/20 absolute -left-[8%] z-0 h-full w-[110%] -rotate-3"></span>
+            <span className="text-primary-800 relative z-10 pr-3">People</span>
           </span>
           <span className="relative z-10">who made it possible</span>
         </h1>
@@ -228,7 +228,7 @@ export default function Home() {
         <h2 className="text-secondary-text text-center text-4xl leading-none font-semibold tracking-tight sm:text-5xl">
           Start writing programs{" "}
           <span className="text-primary-600 relative mt-2 inline-block whitespace-nowrap md:mt-0 md:inline">
-            <span className="bg-primary-200/10 absolute -left-[5%] z-0 h-full w-[110%] -rotate-1"></span>
+            <span className="bg-accent-700/20 absolute -left-[5%] z-0 h-full w-[110%] -rotate-1"></span>
             this morning!
           </span>
         </h2>

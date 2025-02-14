@@ -145,7 +145,7 @@ const CodeEditor: React.FC = () => {
             ))}
           </div>
 
-          <div className="relative w-full">
+          <div className="relative w-full bg-zinc-900">
             <pre
               className="pointer-events-none absolute inset-0 h-full w-full overflow-hidden bg-transparent p-4 font-mono text-sm text-white"
               ref={codeRef}
@@ -156,6 +156,7 @@ const CodeEditor: React.FC = () => {
               value={code}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
+              spellCheck={false}
             />
           </div>
         </div>

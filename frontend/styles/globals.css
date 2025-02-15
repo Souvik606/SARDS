@@ -169,4 +169,53 @@
 body {
   color: var(--text-primary);
   background: var(--background-100);
+  cursor: url("/assets/icons/navigation.png"), auto;
+}
+
+a,
+button,
+optgroup,
+select {
+  cursor: url("/assets/icons/tap.png"), pointer;
+}
+
+/* Keywords */
+.hljs-keyword {
+  color: #ff79c6;
+}
+
+/* Strings */
+.hljs-string {
+  color: #f1fa8c;
+}
+
+/* Numbers */
+.hljs-number {
+  color: #bd93f9;
+}
+
+/* Comments */
+.hljs-comment {
+  color: #6272a4;
+  font-style: italic;
+}
+
+/* Functions */
+.hljs-function {
+  color: #50fafa;
+}
+
+/* Operators */
+.hljs-operator {
+  color: #ffff;
+}
+
+/* Braces & punctuation */
+.hljs-punctuation {
+  color: #e6b3ff;
+}
+
+/* Variables */
+.hljs-variable {
+  color: #6aff9e;
 }

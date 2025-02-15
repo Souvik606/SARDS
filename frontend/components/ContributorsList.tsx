@@ -1,8 +1,7 @@
-"use client";
-
-import React, { FC, useEffect, useState } from "react";
+import React, { FC } from "react";
 import Link from "next/link";
 import { Ellipsis } from "lucide-react";
+import axios, { AxiosError } from "axios";
 
 interface Contributor {
   id: number;
@@ -16,31 +15,33 @@ interface ContributorsListProps {
   repo: string;
 }
 
-const ContributorsList: FC<ContributorsListProps> = ({ owner, repo }) => {
-  const [contributors, setContributors] = useState<Contributor[]>([]);
-
-  useEffect(() => {
-    async function fetchContributors() {
-      try {
-        const res = await fetch(
-          `https://api.github.com/repos/${owner}/${repo}/contributors`
-        );
-        if (!res.ok) {
-          throw new Error(`Error fetching contributors: ${res.statusText}`);
-        }
-        const data: Contributor[] = await res.json();
-        setContributors(data);
-      } catch (error) {
-        console.error("Failed to fetch contributors:", error);
-      }
+const getContributors = async ({
+  owner,
+  repo,
+}: {
+  owner: string;
+  repo: string;
+}) => {
+  try {
+    return await axios.get(
+      `https://api.github.com/repos/${owner}/${repo}/contributors`
+    );
+  } catch (error: AxiosError | Error | any) {
+    if (error.response) {
+      console.error(error.response);
+      throw new Error(error.response);
+    } else {
+      console.error("Unexpected Error:", error);
+      throw new Error(error.message);
     }
+  }
+};
 
-    fetchContributors();
-  }, [owner, repo]);
-
+const ContributorsList: FC<ContributorsListProps> = async ({ owner, repo }) => {
+  const { data } = await getContributors({ owner, repo });
   return (
     <div className="flex flex-wrap gap-4">
-      {contributors.map((contributor) => (
+      {data.map((contributor: Contributor) => (
         <Link
           key={contributor.id}
           href={contributor.html_url}

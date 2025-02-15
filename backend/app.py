@@ -8,6 +8,10 @@ from sards import shell
 
 app = FastAPI(title="SARDS API", version="1.0.0")
 
+
+class CodeRequest(BaseModel):
+    code: str
+
 @app.post("/execute", response_model=dict)
 async def execute_code(request: CodeRequest):
     code = request.code

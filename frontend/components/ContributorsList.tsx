@@ -16,20 +16,23 @@ interface ContributorsListProps {
   repo: string;
 }
 
-const getContributors = async ({owner, repo,}: {
+const getContributors = async ({
+  owner,
+  repo,
+}: {
   owner: string;
   repo: string;
 }): Promise<Contributor[] | null> => {
   try {
     const { data } = await axios.get<Contributor[]>(
-        `https://api.github.com/repos/${owner}/${repo}/contributors`
-  );
+      `https://api.github.com/repos/${owner}/${repo}/contributors`
+    );
     return data;
   } catch (error) {
     if (error instanceof AxiosError) {
-      console.error(error.response);
+      con, sole.error(error.response);
       throw new Error(
-          error?.response?.data?.message || "Failed to fetch contributors."
+        error?.response?.data?.message || "Failed to fetch contributors."
       );
     } else if (error instanceof Error) {
       console.error("Unexpected Error:", error);
@@ -47,39 +50,40 @@ const ContributorsList: FC<ContributorsListProps> = async ({ owner, repo }) => {
   }
 
   return (
-      <div className="flex flex-wrap gap-4">
-        {data.map((contributor: Contributor) => (
-            <Link
-                key={contributor.id}
-                href={contributor.html_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="relative -ml-6 transition-all hover:z-50 hover:scale-110"
-            >
-              <div className="flex flex-col items-center">
-                <Image fill
-                    src={contributor.avatar_url}
-                    alt={contributor.login}
-                    className="border-background-400 peer size-10 rounded-full border-3 object-cover drop-shadow-md hover:border-4"
-                />
-                <p className="absolute bottom-full mt-1 hidden w-max text-sm peer-hover:block">
-                  {contributor.login}
-                </p>
-              </div>
-            </Link>
-        ))}
+    <div className="flex flex-wrap gap-4">
+      {data.map((contributor: Contributor) => (
         <Link
-            href={`https://github.com/${owner}/${repo}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="relative -ml-6 transition-all hover:z-50 hover:scale-110"
-              >
-              <div className="border-background-400 flex size-10 items-center justify-center rounded-full border-3 bg-zinc-800 text-zinc-600 drop-shadow-md hover:border-4">
-              <Ellipsis className="text-secondary-text" />
-              </div>
-              </Link>
-              </div>
-              );
-            };
+          key={contributor.id}
+          href={contributor.html_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="relative -ml-6 transition-all hover:z-50 hover:scale-110"
+        >
+          <div className="flex flex-col items-center">
+            <Image
+              fill
+              src={contributor.avatar_url}
+              alt={contributor.login}
+              className="border-background-400 peer size-10 rounded-full border-3 object-cover drop-shadow-md hover:border-4"
+            />
+            <p className="absolute bottom-full mt-1 hidden w-max text-sm peer-hover:block">
+              {contributor.login}
+            </p>
+          </div>
+        </Link>
+      ))}
+      <Link
+        href={`https://github.com/${owner}/${repo}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="relative -ml-6 transition-all hover:z-50 hover:scale-110"
+      >
+        <div className="border-background-400 flex size-10 items-center justify-center rounded-full border-3 bg-zinc-800 text-zinc-600 drop-shadow-md hover:border-4">
+          <Ellipsis className="text-secondary-text" />
+        </div>
+      </Link>
+    </div>
+  );
+};
 
 export default ContributorsList;

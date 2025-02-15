@@ -9,7 +9,7 @@ hljs.registerLanguage("sards", function (hljs) {
     },
     contains: [
       // Comments (assuming // is for single-line comments)
-      { className: "comment", begin: /\/\/.*/ },
+      // { className: "comment", begin: /\/\/.*/ },
 
       // Strings (both single and double quotes)
       { className: "string", begin: /"(?:\\.|[^"\\])*"/ },

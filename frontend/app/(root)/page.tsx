@@ -244,7 +244,7 @@ export default function Home() {
             <Link
               target="_blank"
               rel="noopener noreferrer"
-              className="sm:border-dark-gray flex items-center justify-center opacity-50 grayscale transition-opacity hover:opacity-100 hover:grayscale-0 sm:border-r sm:pr-8"
+              className="sm:border-dark-gray flex items-center justify-center opacity-50 grayscale transition-opacity hover:opacity-100 hover:grayscale-0 sm:pr-8"
               href="https://nextjs.org"
             >
               <svg
@@ -294,7 +294,7 @@ export default function Home() {
             <Link
               target="_blank"
               rel="noopener noreferrer"
-              className="sm:border-dark-gray flex items-center justify-center opacity-50 grayscale transition-opacity hover:opacity-100 hover:grayscale-0 sm:border-r sm:pr-8"
+              className="sm:border-dark-gray flex items-center justify-center opacity-50 grayscale transition-opacity hover:opacity-100 hover:grayscale-0 sm:pr-8"
               href="https://www.typescriptlang.org"
             >
               <svg

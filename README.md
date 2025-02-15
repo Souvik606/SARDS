@@ -21,10 +21,9 @@ execution and parsing, and a modern **Web Frontend** to enhance your development
 
 ---
 
-[//]: # ([![Tests]&#40;https://github.com/Souvik^06/SARDS/actions/workflows/run-tests.yml/badge.svg&#41;]&#40;https://github.com/Souvik^06/SARDS/actions/workflows/run-tests.yml&#41;)
-
-[//]: # ([![Builds]&#40;https://github.com/Souvik^06/SARDS/actions/workflows/builds.yml/badge.svg&#41;]&#40;https://github.com/Souvik^06/SARDS/actions/workflows/builds.yml&#41;)
 [![Pylint](https://github.com/Souvik606/SARDS/actions/workflows/pylint.yml/badge.svg)](https://github.com/Souvik606/SARDS/actions/workflows/pylint.yml)
+[![Frontend Lint Check](https://github.com/Souvik606/SARDS/actions/workflows/eslint.yml/badge.svg)](https://github.com/Souvik606/SARDS/actions/workflows/eslint.yml)
+
 ---
 
 ## 🚀 Features
@@ -34,18 +33,17 @@ execution and parsing, and a modern **Web Frontend** to enhance your development
 - **🌐 REST API**: Exposes endpoints to execute code and retrieve its AST remotely.
 - **💻 Web Frontend**: A sleek, interactive UI for editing and running SARDS programs.
 
----
 
 ## 📋 Table of Contents
 
-  - [✅ Prerequisites](#-prerequisites)
-  - [⚙️ Setup](#️-setup)
-  - [🛠️ Environment Variables](#️-environment-variables)
-  - [🌐 API Endpoints](#-api-endpoints)
-  - [📌 Usage](#-usage)
-  - [🛠️ Technologies Used](#️-technologies-used)
-  - [📜 License](#-license)
-  - [🤝 Contributing](#-contributing)
+- [Prerequisites](#-prerequisites)
+- [Setup](#️-setup)
+- [Environment Variables](#️-environment-variables)
+- [API Endpoints](#-api-endpoints)
+- [Usage](#-usage)
+- [Technologies Used](#️-technologies-used)
+- [License](#-license)
+- [Contributing](#-contributing)
 
 ---
 

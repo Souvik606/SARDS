@@ -92,13 +92,14 @@ def run(filename, input_text):
 
 
 # REPL (Read-Eval-Print Loop) for continuous user interaction
-while True:
-    text = input('code > ')  # Prompt user for an expression
-    result, errors = run('<stdin>', text)  # Process input
+if __name__ == "__main__":
+    while True:
+        text = input('code > ')  # Prompt user for an expression
+        result, errors = run('<stdin>', text)  # Process input
 
-    # Print errors if encountered, otherwise display the AST
-    if errors:
-        print(errors)
-        print(errors.to_string())
-    elif result:
-        print(result)
+        # Print errors if encountered, otherwise display the AST
+        if errors:
+            print(errors)
+            print(errors.to_string())
+        elif result:
+            print(result)

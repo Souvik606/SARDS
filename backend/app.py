@@ -1,23 +1,19 @@
 import io
 import sys
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 from sards import shell
 
 app = FastAPI(title="SARDS API", version="1.0.0")
 
-
 @app.get("/test-output", response_model=dict)
 async def test_output():
     stdout_backup = sys.stdout
     sys.stdout = io.StringIO()
     try:
-        # Simulate terminal output
         print("Terminal output capture is working!")
-
-        # Capture terminal output
         captured_output = sys.stdout.getvalue()
     finally:
         sys.stdout = stdout_backup
@@ -37,19 +33,13 @@ async def execute_code(request: CodeRequest):
     sys.stdout = io.StringIO()
 
     try:
-        print(code)
+        shell.run("<stdin>", code)
+
+        captured_output = sys.stdout.getvalue()
     finally:
         sys.stdout = stdout_backup
 
-
-@app.post("/parse", response_model=dict)
-async def parse_code(request: CodeRequest):
-    code = request.code
-
-    ast = shell.run("<stdin>", code)
-
-    return {"ast": str(ast)}
-
+    return {"output": captured_output}
 
 if __name__ == "__main__":
     import uvicorn

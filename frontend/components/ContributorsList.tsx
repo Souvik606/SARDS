@@ -30,7 +30,7 @@ const getContributors = async ({
     return data;
   } catch (error) {
     if (error instanceof AxiosError) {
-      con, sole.error(error.response);
+      console.error(error.response);
       throw new Error(
         error?.response?.data?.message || "Failed to fetch contributors."
       );
@@ -61,9 +61,10 @@ const ContributorsList: FC<ContributorsListProps> = async ({ owner, repo }) => {
         >
           <div className="flex flex-col items-center">
             <Image
-              fill
               src={contributor.avatar_url}
               alt={contributor.login}
+              width={100}
+              height={100}
               className="border-background-400 peer size-10 rounded-full border-3 object-cover drop-shadow-md hover:border-4"
             />
             <p className="absolute bottom-full mt-1 hidden w-max text-sm peer-hover:block">

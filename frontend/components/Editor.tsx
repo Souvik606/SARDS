@@ -7,7 +7,6 @@ import hljs from "highlight.js/lib/core";
 const CodeEditor: React.FC = () => {
   const [code, setCode] = useState<string>("");
   const codeRef = useRef<HTMLPreElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const lineNumbers = code.split("\n").map((_, index) => index + 1);
 
   useEffect(() => {

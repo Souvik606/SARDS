@@ -137,7 +137,7 @@ export default function Home() {
         </h2>
         <p className="text-muted max-w-2xl text-center text-lg text-pretty md:text-xl/8">
           Everything you need in a modern programming language
-          <span className="inline sm:block"> even if you're a beginner.</span>
+          <span className="inline sm:block"> even if you are a beginner.</span>
         </p>
         <div id="features">
           <div className="mx-auto grid grid-cols-1 gap-6 sm:w-[80%] sm:grid-cols-2 lg:grid-cols-3">

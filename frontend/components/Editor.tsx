@@ -126,11 +126,17 @@ const CodeEditor: React.FC = () => {
       <div className="flex h-12 items-center justify-between border-b border-zinc-700 bg-zinc-800 px-4">
         <div className="text-lg font-semibold text-white">Playground</div>
         <div className="flex space-x-4">
-          <button className="flex cursor-pointer items-center gap-2 rounded-full border border-teal-400 px-2 py-2 font-medium text-teal-400 transition-all hover:bg-teal-400 hover:text-zinc-800 md:px-8 md:py-1">
+          <button
+            id="editor-run-button"
+            className="flex items-center gap-2 rounded-full border border-teal-400 px-2 py-2 font-medium text-teal-400 transition-all hover:bg-teal-400 hover:text-zinc-800 md:px-8 md:py-1"
+          >
             <Play className="inline size-3" fill="currentColor" />
             <span className="hidden md:inline">Run</span>
           </button>
-          <button className="border-danger-700 hover:bg-danger-700 text-danger-700 flex cursor-pointer items-center gap-2 rounded-full border px-2 py-2 font-medium transition-all hover:text-zinc-800 md:px-8 md:py-1">
+          <button
+            id={"editor-clear-button"}
+            className="border-danger-700 hover:bg-danger-700 text-danger-700 flex items-center gap-2 rounded-full border px-2 py-2 font-medium transition-all hover:text-zinc-800 md:px-8 md:py-1"
+          >
             <Trash className="inline size-3" fill="currentColor" />
             <span className="hidden md:inline">Clear</span>
           </button>

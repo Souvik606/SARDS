@@ -159,6 +159,7 @@
   --muted: oklch(0.553 0.013 58.071);
   --muted-light: #222831;
   --muted-dark: #eeeeee;
+  cursor: url("/assets/icons/navigation.png"), auto;
 }
 
 .wrapper {
@@ -169,7 +170,6 @@
 body {
   color: var(--text-primary);
   background: var(--background-100);
-  cursor: url("/assets/icons/navigation.png"), auto;
 }
 
 a,

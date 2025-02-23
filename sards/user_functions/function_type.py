@@ -290,7 +290,7 @@ class BuiltInFunction(BaseFunction):
 
     execute_show.arg_names = ['value']
 
-    def execute_listen(self):
+    def execute_listen(self,exec_context):
         """
         Executes the 'listen' built-in function.
 
